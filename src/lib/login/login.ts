@@ -44,7 +44,7 @@ export const createWebsocket = (name: string, secret: string): Promise<Readable<
 }
 
 const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: string, res: () => void, rej: (err: unknown) => void) => {
-	const url = new URL("/api/ws", location.href)
+	const url = new URL("api/ws", location.href)
 	const ws = new WebSocket(url);
 	let state: "disconnected" | "connected" | "established" = "disconnected"
 	const retry = () => {

@@ -19,7 +19,7 @@
 	let cfg = blankConfig;
 
 	onMount(() => {
-		fetch('/api/config')
+		fetch('api/config')
 			.then((resp) => resp.json())
 			.then((resp) => {
 				cfg = resp as Config;
