@@ -1,0 +1,32 @@
+{
+	"error": {
+		"connection": "A connection error has occurred. Attempting to reconnect...",
+		"trading": "Your teammate, {name}, is currently trading. This should take no more than {seconds} {seconds, plural, one {second} other {seconds}}.",
+		"tradingWait": "Trying to connect you to the trading system. Please wait.",
+		"tradingExpired": "Your trading session has expired. Try opening the transfer menu again."
+	},
+	"login": {
+		"label.prompt": "Join the game now by entering your name and the secret!",
+		"label.name": "Name",
+		"label.secret": "Secret (provided by game master)",
+		"button.play": "Play"
+	},
+	"dashboard": {
+		"label.noMessage": "Messages will appear here when something happens!",
+		"label.noPastMessage": "Press the archive button to move messages down here.",
+		"label.noPastOrPresentMessage": "You can press the archive button to move messages down here once they appear."
+	},
+	"player": {
+		"label.score": "Current Score:",
+		"label.pastMessages": "Past Messages"
+	},
+	"trade": {
+		"label.timeRemaining": "It's your turn! You have {seconds} {seconds, plural, one {second} other {seconds}} to finish your transaction.",
+		"label.chooseTarget": "Please choose who to transfer to:",
+		"label.target": "Transferring to {teamName}",
+		"button.changeTarget": "Change",
+		"button.selectResource": "Resources",
+		"button.selectGem": "Gems",
+		"button.transfer": "Pay"
+	}
+}

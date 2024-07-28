@@ -5,15 +5,21 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
 
+var currentUserID atomic.Int32
+
 type Conn struct {
 	Authenticated bool
 	TeamID        int
+	UserID        int
+	Nickname      string
 
 	ws     *websocket.Conn
 	closed bool
@@ -24,18 +30,21 @@ type Conn struct {
 func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request) {
 	ws, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		log.Printf("error upgrading websocket: %w", err)
+		log.Printf("error upgrading websocket: %v", err)
 		return
 	}
+	userID := currentUserID.Add(1)
 	conn := &Conn{
 		Authenticated: false,
 		TeamID:        -1,
+		UserID:        int(userID),
 		ws:            ws,
 		mu:            new(sync.Mutex),
 	}
 	defer conn.Close()
 	conn.ws.SetReadLimit(maxMessageSize)
 	conn.ws.SetReadDeadline(time.Now().Add(maxPongGap))
+	go conn.pingTicker()
 	conn.ws.SetPongHandler(conn.pongHandler)
 	for {
 		_, message, err := conn.ws.ReadMessage()
@@ -49,14 +58,14 @@ func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request
 		default:
 			return
 		}
-		cmd, err := ParseCommand(message)
+		cmd, err := conn.ParseCommand(message)
 		if err != nil {
 			log.Printf("Error parsing command: %s\n", err)
 			return
 		}
 		_, isLogin := cmd.(Auth)
-		if isLogin != conn.Authenticated {
-			log.Printf("Unexpected command %T: Authenticated is %v\n", cmd, conn.Authenticated, err)
+		if isLogin == conn.Authenticated {
+			log.Printf("Unexpected command %T: Authenticated is %v\n", cmd, conn.Authenticated)
 			return
 		}
 		if auth, isLogin := cmd.(Auth); isLogin {
@@ -66,14 +75,24 @@ func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request
 					break
 				}
 			}
-			if conn.TeamID >= 0 {
-				continue
+			if conn.TeamID < 0 {
+				log.Printf("Invalid secret: %q\n", auth.Secret)
+				return
 			}
-			log.Printf("Invalid secret: %q\n", auth.Secret)
-			return
+			if strings.TrimSpace(auth.Nickname) == "" {
+				log.Printf("Invalid nickname\n")
+				return
+			}
+			// Login successful.
+			conn.Nickname = auth.Nickname
+			conn.Authenticated = true
+			conn.Send(state)
 		}
 		// TODO: Authentication/Check permission
-		state.msg <- cmd
+		state.msg <- ConnCommand{
+			Conn:    conn,
+			Command: cmd,
+		}
 	}
 }
 
@@ -119,50 +138,84 @@ type (
 const (
 	CommandAuth               CommandType = "auth"
 	CommandLock               CommandType = "lock"
+	CommandUnlock             CommandType = "unlock"
 	CommandTransfer           CommandType = "transfer"
 	CommandNotice             CommandType = "notice"
 	CommandNoticeStatusUpdate CommandType = "notice_status_update"
 )
 
-func ParseCommand(bytes []byte) (Command, error) {
+func (conn *Conn) ParseCommand(bytes []byte) (Command, error) {
 	var cmd CommandJSON
 	if err := json.Unmarshal(bytes, &cmd); err != nil {
 		return nil, fmt.Errorf("error decoding message: %w", err)
 	}
 	var decoded Command
+	var err error
 	switch cmd.Type {
 	case CommandAuth:
-		decoded = Auth{}
+		var auth Auth
+		err = json.Unmarshal(bytes, &auth)
+		decoded = auth
 	case CommandLock:
 		decoded = Lock{}
+	case CommandUnlock:
+		decoded = Unlock{}
 	case CommandTransfer:
-		decoded = Transfer{}
+		var transfer Transfer
+		err = json.Unmarshal(bytes, &transfer)
+		decoded = transfer
 	case CommandNotice:
-		decoded = Notice{}
+		var notice Notice
+		err = json.Unmarshal(bytes, &notice)
+		decoded = notice
 	case CommandNoticeStatusUpdate:
-		decoded = NoticeStatusUpdate{}
+		var nsu NoticeStatusUpdate
+		err = json.Unmarshal(bytes, &nsu)
+		decoded = nsu
 	default:
 		return nil, fmt.Errorf("unknown command type: %s", cmd.Type)
 	}
-	if err := json.Unmarshal(bytes, &cmd); err != nil {
+	if err != nil {
 		return nil, fmt.Errorf("error decoding message of type %q: %w", cmd.Type, err)
 	}
 	return decoded, nil
 }
 
 type GameStateJSON struct {
-	Teams  []Team `json:"teams"`
-	TeamID int    `json:"team_id"`
+	// Type should always be "state".
+	Type       string  `json:"type"`
+	TeamID     int     `json:"team_id"`
+	UserID     int     `json:"user_id"`
+	Score      []Score `json:"score"`
+	LockHolder []Queue `json:"lock_holder"`
 }
 
-func (conn *Conn) Send(state *GameState) error {
+type Score struct {
+	Resources []int `json:"resources"`
+	Gems      []int `json:"gems"`
+}
+
+func (conn *Conn) Send(s *GameState) error {
+	state := *s
 	stateJSON := GameStateJSON{
-		TeamID: conn.TeamID,
-		Teams:  state.Teams,
+		Type:       "state",
+		TeamID:     conn.TeamID,
+		UserID:     int(conn.UserID),
+		LockHolder: make([]Queue, len(state.Teams)),
+		Score:      make([]Score, len(state.Teams)),
+	}
+	for i, team := range state.Teams {
+		stateJSON.LockHolder[i] = team.LockHolder
+		stateJSON.Score[i] = Score{
+			Resources: team.ResourceBalance,
+			Gems:      team.GemBalance,
+		}
 	}
 	b, err := json.Marshal(stateJSON)
 	if err != nil {
 		return fmt.Errorf("error sending message: cannot marshal message: %v", err)
 	}
+	conn.mu.Lock()
+	defer conn.mu.Unlock()
 	return conn.ws.WriteMessage(websocket.TextMessage, b)
 }

@@ -10,21 +10,28 @@ type Command interface {
 	cmd()
 }
 
+type ConnCommand struct {
+	Conn    *Conn
+	Command Command
+}
+
 type Auth struct {
 	Nickname string `json:"nickname"`
 	Secret   string `json:"secret"`
 }
 
-type Lock struct {
-	nickname string
-	teamID   int
-}
+type Lock struct{}
+
+type Unlock struct{}
 
 type Notice struct {
 	Timestamp int    `json:"timestamp"`
 	Level     string `json:"level"`
 	Message   string `json:"message"`
 	Dismissed bool   `json:"dismissed,omitempty"`
+	// TeamID is the intended recipient of the notice. If not specified, it
+	// will be sent to everyone.
+	TeamID *int `json:"team_id,omitempty"`
 }
 
 type NoticeStatusUpdate struct {
@@ -33,9 +40,10 @@ type NoticeStatusUpdate struct {
 }
 
 type Transfer struct {
-	From   int            `json:"from"`
-	To     int            `json:"to"`
-	Amount map[string]int `json:"amount"`
+	From           int   `json:"from"`
+	To             int   `json:"to"`
+	GemAmount      []int `json:"gem_amount"`
+	ResourceAmount []int `json:"resource_amount"`
 }
 
 // timeTick is sent every second to update game state.
@@ -43,6 +51,7 @@ type timeTick struct{}
 
 func (Auth) cmd()               {}
 func (Lock) cmd()               {}
+func (Unlock) cmd()             {}
 func (Notice) cmd()             {}
 func (NoticeStatusUpdate) cmd() {}
 func (Transfer) cmd()           {}
@@ -53,33 +62,54 @@ type GameState struct {
 	Teams   []Team
 	Notices []Notice
 
-	msg chan<- Command
+	msg chan<- ConnCommand
 	cfg Config
 }
 
 type Team struct {
 	TeamConfig
-	Balance              []int  `json:"balance"`
-	LockHolder           string `json:"lock_holder,omitempty"`
-	LockSecondsRemaining int    `json:"lock_seconds_remaining,omitempty"`
+	ResourceBalance      []int `json:"resource_balance"`
+	GemBalance           []int `json:"gem_balance"`
+	LockHolder           Queue `json:"lock_holder,omitempty"`
+	LockSecondsRemaining int   `json:"lock_seconds_remaining,omitempty"`
 }
 
 func NewGameState(cfg Config) (*GameState, error) {
 	teams := make([]Team, 0, len(cfg.Teams))
 	for i, team := range cfg.Teams {
-		balance := make([]int, len(cfg.Currencies))
+		resourceBal := make([]int, len(cfg.ResourceNames))
+		gemBal := make([]int, len(cfg.GemNames))
 		switch {
 		case team.InitialBalance == nil:
 			// Default everything to zero if not specified.
-		case len(*team.InitialBalance) != len(cfg.Currencies):
+		case len(team.InitialBalance.Resources) != len(cfg.ResourceNames):
 			return nil, fmt.Errorf(
-				"error validating config: expect initial balance to be of length %d for team %d (%s)",
-				len(cfg.Currencies), i, team.Name,
+				"error validating config: expect initial resource balance to be of length %d for team %d (%s)",
+				len(cfg.ResourceNames), i, team.Name,
 			)
+		case len(team.InitialBalance.Gems) != len(cfg.GemNames):
+			return nil, fmt.Errorf(
+				"error validating config: expect initial gem balance to be of length %d for team %d (%s)",
+				len(cfg.GemNames), i, team.Name,
+			)
+		default:
+			copy(resourceBal, team.InitialBalance.Resources)
+			copy(gemBal, team.InitialBalance.Gems)
+		}
+		// Admin gets infinite resources and effectively infinite resources (display-wise).
+		if team.Admin {
+			for i := range gemBal {
+				gemBal[i] = 999999
+			}
+			for i := range resourceBal {
+				resourceBal[i] = 999999
+			}
 		}
 		teams = append(teams, Team{
-			TeamConfig: team,
-			Balance:    balance,
+			TeamConfig:      team,
+			ResourceBalance: resourceBal,
+			GemBalance:      gemBal,
+			LockHolder:      NewQueue(cfg.LockLengthSeconds),
 		})
 	}
 	return &GameState{
@@ -91,39 +121,48 @@ func NewGameState(cfg Config) (*GameState, error) {
 }
 
 func (state *GameState) Start() {
-	hasUpdate := false
-	ch := make(chan Command)
+	ch := make(chan ConnCommand)
 	state.msg = ch
 	go func() {
 		for range time.NewTicker(time.Second).C {
-			ch <- timeTick{}
+			ch <- ConnCommand{
+				Conn:    nil,
+				Command: timeTick{},
+			}
 		}
 	}()
 	msg := <-ch
 	for {
 		state.handleMessage(msg)
-		var ok bool
-		msg, ok = <-ch
-		if ok {
+		select {
+		case msg = <-ch:
 			// Process the message.
 			continue
-		}
-		// Probably processed all the message. Time to send updates.
-		state.gc()
-		if hasUpdate {
+		default:
+			// Probably processed all the message. Time to send updates.
+			state.gc()
 			state.send()
+			// Block until next message.
+			msg = <-ch
 		}
-		msg = <-ch
 	}
 }
 
-func (state *GameState) handleMessage(cmd Command) {
-	switch cmd := cmd.(type) {
+func (state *GameState) handleMessage(connCmd ConnCommand) {
+	conn := connCmd.Conn
+	if _, isTimeTick := connCmd.Command.(timeTick); conn == nil && !isTimeTick {
+		panic("expected conn to be filled in when processed in GameState")
+	}
+	switch cmd := connCmd.Command.(type) {
 	case Auth:
-		panic("unexpected Auth message in GameState")
+		state.Players = append(state.Players, conn)
 	case Lock:
-		state.Teams[cmd.teamID].LockHolder = cmd.nickname
-		state.Teams[cmd.teamID].LockSecondsRemaining = state.cfg.LockLengthSeconds
+		state.Teams[conn.TeamID].LockHolder.Join(NewLockHolder(connCmd.Conn))
+		/*
+			state.Teams[conn.UserID].LockSecondsRemaining = state.cfg.LockLengthSeconds
+		*/
+	case Unlock:
+		state.Teams[conn.TeamID].LockHolder.Leave(NewLockHolder(connCmd.Conn))
 	case Notice:
 		cmd.Timestamp = int(time.Now().Unix())
 		state.Notices = append(state.Notices, cmd)
@@ -136,6 +175,12 @@ func (state *GameState) handleMessage(cmd Command) {
 			return
 		}
 		state.Notices[cmd.ID].Dismissed = cmd.Dismissed
+	case Transfer:
+		state.handleTransferCommand(connCmd)
+	case timeTick:
+		for i := range state.Teams {
+			state.Teams[i].LockHolder.Advance(1)
+		}
 	default:
 		panic(fmt.Sprintf("unknown command type: %T", cmd))
 	}
@@ -165,4 +210,42 @@ func (state *GameState) gc() {
 		write++
 	}
 	state.Players = state.Players[:write]
+}
+
+func (state *GameState) handleTransferCommand(transfer ConnCommand) {
+	cmd := transfer.Command.(Transfer)
+	// Check From.
+	switch {
+	case state.cfg.Teams[cmd.From].Admin:
+		// Admins are always allowed.
+	default:
+		fromTeam := state.Teams[cmd.From]
+		for i := range cmd.GemAmount {
+			if cmd.GemAmount[i] > 0 && fromTeam.GemBalance[i] < cmd.GemAmount[i] {
+				log.Printf("Insufficient gems to transfer.")
+				return
+			}
+		}
+		for i := range cmd.ResourceAmount {
+			if cmd.ResourceAmount[i] > 0 && fromTeam.ResourceBalance[i] < cmd.ResourceAmount[i] {
+				log.Printf("Insufficient resources to transfer.")
+				return
+			}
+		}
+		// Deduct from players.
+		for i := range cmd.GemAmount {
+			fromTeam.GemBalance[i] -= cmd.GemAmount[i]
+		}
+		for i := range cmd.ResourceAmount {
+			fromTeam.ResourceBalance[i] -= cmd.ResourceAmount[i]
+		}
+	}
+	// Update To.
+	toTeam := state.Teams[cmd.To]
+	for i := range cmd.GemAmount {
+		toTeam.GemBalance[i] += cmd.GemAmount[i]
+	}
+	for i := range cmd.ResourceAmount {
+		toTeam.ResourceBalance[i] += cmd.ResourceAmount[i]
+	}
 }
