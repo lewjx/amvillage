@@ -12,6 +12,7 @@
 	export let cfg: Config;
 	export let session: Session;
 	export let close: () => void;
+	export let teamSelected = -1;
 	onMount(() => {
 		/* This component assumes that the player has acquired the trading lock. */
 		if (!isHoldingLock(cfg, session)) {
@@ -23,7 +24,6 @@
 
 	$: isAdmin = cfg.teams[session.team_id].admin;
 	let state: 'resources' | 'gems' = 'resources';
-	let teamSelected = -1;
 
 	let resourceCount = cfg.resource_names.map(() => 0);
 	let gemCount = cfg.gem_names.map(() => 0);
@@ -66,8 +66,8 @@
 		close();
 	};
 
-	const selectTeam = (select: number) => {
-		teamSelected = select;
+	const selectTeam = (selection: number) => {
+		teamSelected = selection;
 		state = 'resources';
 	};
 	const onChange = () => {
@@ -130,8 +130,9 @@
 						problematic={!ok[i]}
 						bind:value={count[i]}
 						on:change={onChange}
+						allowNegative={!!isAdmin}
 						min={isAdmin ? -targetTeamCount[i] : 0}
-						max={isAdmin ? 999999 : teamCount[i]}
+						max={isAdmin ? Infinity : teamCount[i]}
 					/>
 				{/each}
 			{/key}

@@ -20,12 +20,14 @@ export type Score = {
 	gems: number[]
 };
 
-export type MessageType = "highlight" | "warning" | "message";
-export type Message = {
+export type NoticeType = "pause" | "highlight" | "warning" | "message";
+export type Notice = {
+	timestamp: number
 	id: number
-	type: MessageType
-	content: string
-	archived: boolean | undefined
+	level: NoticeType
+	message: string
+	dismissed: boolean | undefined
+	team_id: number | undefined
 };
 
 export const scoreBreakdown = (score: Score) => ({

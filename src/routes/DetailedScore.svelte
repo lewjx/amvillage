@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { number } from 'svelte-i18n';
 	import { scoreBreakdown, type Config, type Score } from '../lib/score';
+	import DownIcon from '$lib/icons/DownIcon.svelte';
 
 	export let cfg: Config;
 	export let score: Score;
@@ -16,7 +17,7 @@
 		<div class="resources">
 			{#each score.resources as resource, i}
 				<div class="warning">
-					{#if resourceWarning[i]}⚠️{/if}
+					{#if resourceWarning[i]}<DownIcon />{/if}
 				</div>
 				<div class="resourceName" class:warning={resourceWarning[i]}>{cfg.resource_names[i]}</div>
 				<div class="amount" class:warning={resourceWarning[i]}>{$number(resource)}</div>
@@ -29,7 +30,7 @@
 		<div class="resources">
 			{#each score.gems as gem, i}
 				<div class="warning">
-					{#if gemWarning[i]}⚠️{/if}
+					{#if gemWarning[i]}<DownIcon />{/if}
 				</div>
 				<div class="resourceName" class:warning={gemWarning[i]}>{cfg.gem_names[i]}</div>
 				<div class="amount" class:warning={gemWarning[i]}>{$number(gem)}</div>
@@ -50,7 +51,7 @@
 		@apply flex flex-col items-center;
 	}
 	.resources {
-		@apply grid gap-x-3;
+		@apply grid justify-center gap-x-3;
 		grid-template-columns: auto 1fr auto;
 	}
 	.resources div.warning {

@@ -7,6 +7,7 @@
 	export let value: number;
 	export let min: number;
 	export let max: number;
+	export let allowNegative: boolean;
 
 	const dispatch = createEventDispatcher();
 	const onChange = () => {
@@ -16,7 +17,7 @@
 	const capValue = (e: Event & { currentTarget: HTMLInputElement | null }) => {
 		if (e.currentTarget !== null) {
 			const inputMax = sign === 1 ? max : -min;
-			inputValue = Math.max(Math.min(+e.currentTarget.value, inputMax), 0);
+			inputValue = Math.max(Math.min(+e.currentTarget.value, inputMax, 999999), 0);
 			// Force value to be a valid number.
 			e.currentTarget.value = +inputValue + '';
 			onChange();
@@ -41,7 +42,7 @@
 	};
 
 	$: {
-		if (sign === -1 && min >= 0) sign = 1;
+		if (sign === -1 && !allowNegative) sign = 1;
 	}
 
 	const update = (hold: number) => {
@@ -52,11 +53,11 @@
 		speed *= 1.1;
 		inputValue += Math.floor(speed) * hold;
 		const inputMax = sign === 1 ? max : -min;
-		inputValue = Math.max(Math.min(inputValue, inputMax), 0);
+		inputValue = Math.max(Math.min(inputValue, inputMax, 999999), 0);
 		onChange();
 	};
 	onMount(() => {
-		let interval = setInterval(() => update(hold), 100);
+		let interval = setInterval(() => update(hold), 200);
 		return () => clearInterval(interval);
 	});
 </script>

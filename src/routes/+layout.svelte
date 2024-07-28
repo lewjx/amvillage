@@ -14,6 +14,6 @@
 
 <style lang="postcss">
 	:global(body) {
-		@apply bg-background text-primary;
+		@apply min-h-screen bg-background text-primary;
 	}
 </style>

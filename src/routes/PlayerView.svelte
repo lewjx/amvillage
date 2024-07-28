@@ -7,6 +7,8 @@
 	import type { Session } from '$lib/login/login';
 	import { type Config, finalScore } from '$lib/score';
 	import DetailedScore from './DetailedScore.svelte';
+	import PauseOverlay from '$lib/PauseOverlay.svelte';
+	import PauseIcon from '$lib/icons/PauseIcon.svelte';
 
 	export let cfg: Config;
 	export let session: Readable<Session>;
@@ -14,23 +16,30 @@
 	export let openTutorial: () => void;
 
 	$: score = $session.score[$session.team_id];
+	$: fullScreenNotice = $session.notices.find((x) => x.level === 'pause' && !x.dismissed);
 </script>
 
 {#if !$session.ws}
-	<div class="p-4">
+	<div class="h-screen p-4">
 		<ConnectionError />
+	</div>
+{:else if fullScreenNotice}
+	<div class="h-screen p-8">
+		<PauseOverlay text={fullScreenNotice.message}>
+			<PauseIcon class="size-16 text-highlight" slot="icon" />
+		</PauseOverlay>
 	</div>
 {:else}
 	<Score score={finalScore(score)} />
 	<DetailedScore {score} {cfg} />
 	<div class="buttons">
-		<Button type="solid" on:click={openSend}>Send</Button>
+		<Button type="solid" on:click={() => openSend()}>Send</Button>
 		<Button type="outline" on:click={openTutorial}>Tutorial</Button>
 	</div>
 
 	<hr />
 
-	<Messages bind:messages={$session.messages} />
+	<Messages {cfg} session={$session} bind:messages={$session.notices} />
 {/if}
 
 <style lang="postcss">

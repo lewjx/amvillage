@@ -1,10 +1,9 @@
 <script lang="ts">
-	export let icon: string;
 	export let text: string;
 </script>
 
 <div>
-	<h1>{icon}</h1>
+	<h1><slot name="icon" /></h1>
 	<p>{text}</p>
 </div>
 

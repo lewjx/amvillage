@@ -24,11 +24,21 @@ type Lock struct{}
 
 type Unlock struct{}
 
+type NoticeLevel string
+
+const (
+	NoticePause     NoticeLevel = "pause"
+	NoticeHighlight NoticeLevel = "highlight"
+	NoticeWarning   NoticeLevel = "warning"
+	NoticeMessage   NoticeLevel = "message"
+)
+
 type Notice struct {
-	Timestamp int    `json:"timestamp"`
-	Level     string `json:"level"`
-	Message   string `json:"message"`
-	Dismissed bool   `json:"dismissed,omitempty"`
+	ID        int         `json:"id"`
+	Timestamp int         `json:"timestamp"`
+	Level     NoticeLevel `json:"level"`
+	Message   string      `json:"message"`
+	Dismissed bool        `json:"dismissed,omitempty"`
 	// TeamID is the intended recipient of the notice. If not specified, it
 	// will be sent to everyone.
 	TeamID *int `json:"team_id,omitempty"`
@@ -62,8 +72,9 @@ type GameState struct {
 	Teams   []Team
 	Notices []Notice
 
-	msg chan<- ConnCommand
-	cfg Config
+	msg          chan<- ConnCommand
+	cfg          Config
+	nextNoticeID int
 }
 
 type Team struct {
@@ -141,7 +152,7 @@ func (state *GameState) Start() {
 		default:
 			// Probably processed all the message. Time to send updates.
 			state.gc()
-			state.send()
+			state.sendState()
 			// Block until next message.
 			msg = <-ch
 		}
@@ -165,16 +176,32 @@ func (state *GameState) handleMessage(connCmd ConnCommand) {
 		state.Teams[conn.TeamID].LockHolder.Leave(NewLockHolder(connCmd.Conn))
 	case Notice:
 		cmd.Timestamp = int(time.Now().Unix())
-		state.Notices = append(state.Notices, cmd)
+		cmd.ID = state.nextNoticeID
+		state.nextNoticeID++
+		switch cmd.Level {
+		case NoticePause, NoticeHighlight:
+			// Pause and highlights are important notices that we want to
+			// re-send to players whenever they reconnect.
+			state.Notices = append(state.Notices, cmd)
+		case NoticeWarning, NoticeMessage:
+			// These are OK to drop as they are typically one-off.
+		default:
+			panic(fmt.Sprintf("unknown notice level: %s", cmd.Level))
+		}
+		state.sendNotice(cmd)
 	case NoticeStatusUpdate:
-		if cmd.ID >= len(state.Notices) {
-			log.Printf(
-				"unexpected malformed NoticeStatusUpdate: ID %d for length %d\n",
-				cmd.ID, len(state.Notices),
-			)
+		for i, notice := range state.Notices {
+			if notice.ID != cmd.ID {
+				continue
+			}
+			state.Notices[i].Dismissed = cmd.Dismissed
+			state.sendNotice(state.Notices[i])
 			return
 		}
-		state.Notices[cmd.ID].Dismissed = cmd.Dismissed
+		log.Printf(
+			"unexpected malformed NoticeStatusUpdate: ID %d for length %d\n",
+			cmd.ID, len(state.Notices),
+		)
 	case Transfer:
 		state.handleTransferCommand(connCmd)
 	case timeTick:
@@ -186,13 +213,29 @@ func (state *GameState) handleMessage(connCmd ConnCommand) {
 	}
 }
 
-func (state *GameState) send() {
+func (state *GameState) sendState() {
 	for _, v := range state.Players {
 		v := v
 		// FIXME: This is racey.
 		go func() {
-			if err := v.Send(state); err != nil {
+			if err := v.SendState(state, false); err != nil {
 				log.Printf("failed to send game state to connection: %v\n", err)
+				v.Close()
+			}
+		}()
+	}
+}
+
+func (state *GameState) sendNotice(notice Notice) {
+	for _, v := range state.Players {
+		v := v
+		if !notice.AppliesTo(v, state) {
+			continue
+		}
+		// FIXME: This is racey.
+		go func() {
+			if err := v.SendNotice(notice); err != nil {
+				log.Printf("failed to send notice to connection: %v\n", err)
 				v.Close()
 			}
 		}()
@@ -248,4 +291,8 @@ func (state *GameState) handleTransferCommand(transfer ConnCommand) {
 	for i := range cmd.ResourceAmount {
 		toTeam.ResourceBalance[i] += cmd.ResourceAmount[i]
 	}
+}
+
+func (notice Notice) AppliesTo(conn *Conn, s *GameState) bool {
+	return notice.TeamID == nil || *notice.TeamID == conn.TeamID || s.cfg.Teams[conn.TeamID].Admin
 }

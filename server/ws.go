@@ -86,7 +86,7 @@ func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request
 			// Login successful.
 			conn.Nickname = auth.Nickname
 			conn.Authenticated = true
-			conn.Send(state)
+			conn.SendState(state, true)
 		}
 		// TODO: Authentication/Check permission
 		state.msg <- ConnCommand{
@@ -183,11 +183,12 @@ func (conn *Conn) ParseCommand(bytes []byte) (Command, error) {
 
 type GameStateJSON struct {
 	// Type should always be "state".
-	Type       string  `json:"type"`
-	TeamID     int     `json:"team_id"`
-	UserID     int     `json:"user_id"`
-	Score      []Score `json:"score"`
-	LockHolder []Queue `json:"lock_holder"`
+	Type       string   `json:"type"`
+	TeamID     int      `json:"team_id"`
+	UserID     int      `json:"user_id"`
+	Score      []Score  `json:"score"`
+	LockHolder []Queue  `json:"lock_holder"`
+	Notices    []Notice `json:"notices,omitempty"`
 }
 
 type Score struct {
@@ -195,7 +196,7 @@ type Score struct {
 	Gems      []int `json:"gems"`
 }
 
-func (conn *Conn) Send(s *GameState) error {
+func (conn *Conn) SendState(s *GameState, includeNotice bool) error {
 	state := *s
 	stateJSON := GameStateJSON{
 		Type:       "state",
@@ -211,7 +212,34 @@ func (conn *Conn) Send(s *GameState) error {
 			Gems:      team.GemBalance,
 		}
 	}
+	if includeNotice {
+		for _, v := range s.Notices {
+			if v.AppliesTo(conn, s) {
+				stateJSON.Notices = append(stateJSON.Notices, v)
+			}
+		}
+	}
 	b, err := json.Marshal(stateJSON)
+	if err != nil {
+		return fmt.Errorf("error sending message: cannot marshal message: %v", err)
+	}
+	conn.mu.Lock()
+	defer conn.mu.Unlock()
+	return conn.ws.WriteMessage(websocket.TextMessage, b)
+}
+
+type NoticeJSON struct {
+	Notice
+	// Type should always be "notice".
+	Type string `json:"type"`
+}
+
+func (conn *Conn) SendNotice(notice Notice) error {
+	noticeJSON := NoticeJSON{
+		Type:   "notice",
+		Notice: notice,
+	}
+	b, err := json.Marshal(noticeJSON)
 	if err != nil {
 		return fmt.Errorf("error sending message: cannot marshal message: %v", err)
 	}

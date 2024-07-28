@@ -1,5 +1,5 @@
-import { writable, type Readable, type Writable } from 'svelte/store';
-import { type Message, type Score } from "$lib/score";
+import { get, writable, type Readable, type Writable } from 'svelte/store';
+import { type Notice, type Score } from "$lib/score";
 
 export type LockInfo = {
 	seconds_remaining: number
@@ -15,8 +15,13 @@ export type Session = {
 	team_id: number
 	lock_holder: LockInfo[]
 	score: Score[]
-	messages: Message[]
+	notices: Notice[]
 }
+
+type StateMessage = { type: "state" } & Session;
+type NoticeMessage = { type: "notice" } & Notice;
+
+type WebSocketMessage = StateMessage | NoticeMessage;
 
 export const createWebsocket = (name: string, secret: string): Promise<Readable<Session>> => {
 	const store = writable<Session>({
@@ -24,27 +29,36 @@ export const createWebsocket = (name: string, secret: string): Promise<Readable<
 		user_id: -1,
 		lock_holder: [],
 		score: [],
-		messages: [],
+		notices: [],
 	});
 	return new Promise((res, rej) => {
 		keepWebsocketAlive(
 			store, name, secret,
 			() => res(store),
-			rej,
+			(err: unknown) => {
+				console.error(err)
+				rej(err)
+			},
 		)
 	});
 }
 
 const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: string, res: () => void, rej: (err: unknown) => void) => {
-	const ws = new WebSocket("/api/ws");
-	let established = false
+	const url = new URL("/api/ws", location.href)
+	const ws = new WebSocket(url);
+	let state: "disconnected" | "connected" | "established" = "disconnected"
 	const retry = () => {
-		// Do not retry if we did not even receive one message.
-		if (!established) {
-			rej(new Error("Cannot establish WebSocket connection. Possible invalid secret?"))
-			return
+		switch (state) {
+			case "disconnected":
+				rej(new Error("Failed to connect to the server. Check your network connection."))
+				return
+			case "connected":
+				// Do not retry if we did not successfully authenticate.
+				rej(new Error("Failed to authenticate. Check your secret."))
+				return
+			case "established":
+				break
 		}
-		established = false
 		store.update((original) => {
 			original.ws = undefined
 			setTimeout(() => keepWebsocketAlive(store, name, secret, res, rej), 1000)
@@ -52,6 +66,7 @@ const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: stri
 		})
 	}
 	ws.onopen = () => {
+		state = "connected"
 		ws.send(JSON.stringify({
 			type: "auth",
 			nickname: name,
@@ -67,22 +82,40 @@ const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: stri
 		retry()
 	}
 	ws.onmessage = (msg: MessageEvent) => {
-		if (!established) {
+		if (state === "connected") {
 			// First message, resolve the websocket.
 			store.update((original) => {
 				original.ws = ws
 				return original
 			})
 			res()
-			established = true
+			state = "established"
 		}
-		const latestInfo = JSON.parse(msg.data) as Session
-		store.update((session) => {
-			return {
-				...session,
-				...latestInfo,
-			}
-		})
+		const latestInfo = JSON.parse(msg.data) as WebSocketMessage
 		console.log(latestInfo)
+		switch (latestInfo.type) {
+			case "state":
+				store.update((session) => {
+					return {
+						...session,
+						...latestInfo,
+					}
+				})
+				break
+			case "notice":
+				store.update((session) => {
+					let notices = session.notices
+					let updateIdx = session.notices.findIndex((x) => x.id === latestInfo.id)
+					if (updateIdx !== -1) {
+						session.notices.splice(updateIdx, 1)
+					}
+					return {
+						...session,
+						notices: [...notices, latestInfo],
+					}
+				})
+				break
+		}
+		console.log(get(store))
 	}
 }

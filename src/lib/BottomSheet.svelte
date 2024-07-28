@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { disableScroll, enableScroll } from './modal';
+	import CloseIcon from './icons/CloseIcon.svelte';
 
 	export let onClose: (() => void) | undefined = undefined;
 	$: canClose = !!onClose;
@@ -29,18 +30,7 @@
 <div class="sheet-container" transition:fly={{ y: 500, duration }}>
 	{#if canClose}
 		<div class="close-row">
-			<button on:click={close}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-					class="size-10"
-				>
-					<path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-				</svg>
-			</button>
+			<button on:click={close}><CloseIcon /></button>
 		</div>
 	{/if}
 	<slot />
