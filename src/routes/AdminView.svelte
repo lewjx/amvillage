@@ -29,7 +29,7 @@
 
 <style lang="postcss">
 	.header {
-		@apply bg-highlight py-4 text-center text-background;
+		@apply bg-highlight px-2 py-4 text-center text-background;
 	}
 	hr {
 		@apply mx-4 my-6 border-t border-primary;

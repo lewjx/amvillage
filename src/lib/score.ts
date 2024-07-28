@@ -1,4 +1,5 @@
 export type Config = {
+	language: "en" | "zh"
 	teams: {
 		name: string;
 		admin: boolean | undefined;

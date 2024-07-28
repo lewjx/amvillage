@@ -1,0 +1,47 @@
+{
+	"error": {
+		"connection": "与伺服器断开了链接。尝试重新连接中……",
+		"trading": "队友 {name} 正在交易中。{seconds}秒内将会轮到你。",
+		"tradingWait": "连接交易系统中。请稍候……",
+		"tradingExpired": "交易时间已结束。如果想要继续交易，请重新打开交易画面。"
+	},
+	"login": {
+		"label.prompt": "输入你的名字和密码即可加入游戏！",
+		"label.name": "名字",
+		"label.secret": "密码（由节策提供）",
+		"button.play": "开始游戏"
+	},
+	"dashboard": {
+		"label.noMessage": "新的信息将在这里出现！",
+		"label.noPastMessage": "在上面的信息按下收藏键即可把信息移下来。",
+		"label.noPastOrPresentMessage": "上面有信息的时候，你可以把上面的信息移来这里。",
+		"label.toGroup": "致{groupName}："
+	},
+	"player": {
+		"label.score": "分数：",
+		"label.pastMessages": "已收藏的信息"
+	},
+	"admin": {
+		"label.header": "你目前在管理员模式。管理员模式中没有检查你的余额。",
+		"label.noticePlaceholder": "输入要发出的信息……",
+		"label.noticePause": "全屏弹出",
+		"label.noticeHighlight": "重要事件",
+		"label.noticeWarning": "游戏事件",
+		"label.noticeMessage": "通知信息",
+		"label.conflictingPause": "目前有另外一个全屏信息正在展示中。请在下面取消那个信息才开始新的。",
+		"label.chooseBroadcastTarget": "选择目标组别：",
+		"button.broadcastGlobal": "发送给全部人",
+		"button.broadcastGroup": "发送给一个组别",
+		"button.broadcastGlobalPause": "【暂停整个游戏】",
+		"button.broadcastGroupPause": "【暂停一个组别】"
+	},
+	"trade": {
+		"label.timeRemaining": "现在是你的回合！你有{seconds}秒完成交易。",
+		"label.chooseTarget": "请选择交易对象：",
+		"label.target": "转账给{teamName}",
+		"button.changeTarget": "改变对象",
+		"button.selectResource": "资源",
+		"button.selectGem": "宝石",
+		"button.transfer": "转账"
+	}
+}

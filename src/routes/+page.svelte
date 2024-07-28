@@ -11,6 +11,7 @@
 	import PlayerView from './PlayerView.svelte';
 	import AdminView from './AdminView.svelte';
 	import AdminSelectGroup from '$lib/dashboard/AdminSelectGroup.svelte';
+	import { locale } from 'svelte-i18n';
 
 	let sheet: 'login' | 'send' | 'tutorial' | 'error' | 'select_group' | undefined = 'login';
 	let teamID: number;
@@ -20,7 +21,10 @@
 	onMount(() => {
 		fetch('/api/config')
 			.then((resp) => resp.json())
-			.then((resp) => (cfg = resp as Config))
+			.then((resp) => {
+				cfg = resp as Config;
+				$locale = cfg.language;
+			})
 			.catch((err) => {
 				console.error(err);
 				openError();

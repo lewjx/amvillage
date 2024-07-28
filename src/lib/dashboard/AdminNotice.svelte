@@ -51,7 +51,11 @@
 
 <div class="mb-4 flex flex-col items-center gap-2">
 	<div class="notice">
-		<textarea class="notice-message" bind:value={noticeMessage} />
+		<textarea
+			class="notice-message"
+			bind:value={noticeMessage}
+			placeholder={$_('admin.label.noticePlaceholder')}
+		/>
 		<div class="level">
 			<div class="text-highlight">
 				<input
@@ -140,7 +144,7 @@
 		@apply mx-2 border border-primary px-4 py-2;
 	}
 	textarea {
-		@apply w-full border border-primary bg-background text-lg text-primary;
+		@apply w-full bg-background text-lg text-primary;
 	}
 	.level {
 		@apply flex flex-col flex-wrap gap-1 lg:flex-row;

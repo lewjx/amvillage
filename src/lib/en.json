@@ -23,6 +23,7 @@
 	},
 	"admin": {
 		"label.header": "You are in administrator mode. Permission checks have been disabled.",
+		"label.noticePlaceholder": "Enter the message here...",
 		"label.noticePause": "Full Screen Pop-up",
 		"label.noticeHighlight": "Highlight Event",
 		"label.noticeWarning": "In-Game Events",

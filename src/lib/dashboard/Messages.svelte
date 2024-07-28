@@ -96,7 +96,7 @@
 
 <style lang="postcss">
 	.messages {
-		@apply mx-4;
+		@apply mx-4 mb-4;
 	}
 	div {
 		@apply overflow-hidden;

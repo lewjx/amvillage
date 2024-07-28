@@ -1,13 +1,12 @@
 <script>
 	import '../app.css';
-	import { addMessages, getLocaleFromNavigator, init } from 'svelte-i18n';
+	import { addMessages, init } from 'svelte-i18n';
 	import en from '../lib/en.json';
+	import zh from '../lib/zh.json';
 
 	addMessages('en', en);
-	init({
-		initialLocale: getLocaleFromNavigator(),
-		fallbackLocale: 'en'
-	});
+	addMessages('zh', zh);
+	init({ fallbackLocale: 'en' });
 </script>
 
 <slot></slot>
