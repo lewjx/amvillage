@@ -68,25 +68,69 @@ func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request
 			log.Printf("Unexpected command %T: Authenticated is %v\n", cmd, conn.Authenticated)
 			return
 		}
-		if auth, isLogin := cmd.(Auth); isLogin {
+		// Validate messages.
+		switch cmd := cmd.(type) {
+		case Auth:
 			for i, team := range state.Teams {
-				if team.Secret == auth.Secret {
+				if team.Secret == cmd.Secret {
 					conn.TeamID = i
 					break
 				}
 			}
 			if conn.TeamID < 0 {
-				log.Printf("Invalid secret: %q\n", auth.Secret)
+				log.Printf("Invalid secret: %q\n", cmd.Secret)
 				return
 			}
-			if strings.TrimSpace(auth.Nickname) == "" {
+			if strings.TrimSpace(cmd.Nickname) == "" {
 				log.Printf("Invalid nickname\n")
 				return
 			}
 			// Login successful.
-			conn.Nickname = auth.Nickname
+			conn.Nickname = cmd.Nickname
 			conn.Authenticated = true
-			conn.SendState(state, true)
+			if err := conn.SendState(state, true); err != nil {
+				log.Printf("Error sending initial state: %v\n", err)
+				return
+			}
+		case Lock, Unlock:
+			// Empty struct. Nothing to validate.
+		case Notice, NoticeStatusUpdate:
+			// Only admins can send these command.
+			if !state.cfg.Teams[conn.TeamID].Admin {
+				log.Printf("Normal player attempted to send notice: %#v\n", cmd)
+				return
+			}
+		case Transfer:
+			if cmd.From < 0 || cmd.From >= len(state.cfg.Teams) {
+				log.Printf("Invalid From team ID: %#v\n", cmd)
+				return
+			}
+			if cmd.To < 0 || cmd.To >= len(state.cfg.Teams) {
+				log.Printf("Invalid To team ID: %#v\n", cmd)
+				return
+			}
+			// Normal player can only transfer from themselves and must always
+			// transfer a positive amount.
+			if !state.cfg.Teams[conn.TeamID].Admin {
+				if cmd.From != conn.TeamID {
+					log.Printf("Normal player of team %d attempted to transfer as %d\n", conn.TeamID, cmd.From)
+					return
+				}
+				for _, v := range cmd.GemAmount {
+					if v < 0 {
+						log.Printf("Normal player of team %d attempted to transfer negative gems: %d\n", conn.TeamID, v)
+						return
+					}
+				}
+				for _, v := range cmd.ResourceAmount {
+					if v < 0 {
+						log.Printf("Normal player of team %d attempted to transfer negative resources: %d\n", conn.TeamID, v)
+						return
+					}
+				}
+			}
+		default:
+			panic(fmt.Sprintf("unknown command type: %T", cmd))
 		}
 		// TODO: Authentication/Check permission
 		state.msg <- ConnCommand{
@@ -192,8 +236,8 @@ type GameStateJSON struct {
 }
 
 type Score struct {
-	Resources []int `json:"resources"`
-	Gems      []int `json:"gems"`
+	Resources []int `json:"resources,omitempty"`
+	Gems      []int `json:"gems,omitempty"`
 }
 
 func (conn *Conn) SendState(s *GameState, includeNotice bool) error {

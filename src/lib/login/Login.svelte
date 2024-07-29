@@ -17,13 +17,17 @@
 		}
 	});
 
+	let loggingIn = false;
+	let currentError = '';
 	const tryLogin = async () => {
 		try {
-			// TODO: Disable login button.
+			loggingIn = true;
+			currentError = '';
 			onComplete(await createWebsocket(loginName, secret));
 		} catch (err: any) {
-			// TODO: Handle error correctly.
-			console.error(err);
+			currentError = err.message;
+		} finally {
+			loggingIn = false;
 		}
 	};
 </script>
@@ -40,10 +44,11 @@
 			<input id="secret" type="password" bind:value={secret} />
 		</div>
 	</div>
-	<Button type="solid" on:click={tryLogin} disabled={loginName.trim() === ''}>
+	<Button type="solid" on:click={tryLogin} disabled={loginName.trim() === '' || loggingIn}>
 		<PlayIcon />
 		{$_('login.button.play')}
 	</Button>
+	<div class="text-highlight">{currentError}</div>
 </div>
 
 <style lang="postcss">

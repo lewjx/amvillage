@@ -19,7 +19,7 @@
 	},
 	"player": {
 		"label.score": "分数：",
-		"label.pastMessages": "已收藏的信息"
+		"label.pastMessages": "已归档的信息"
 	},
 	"admin": {
 		"label.header": "你目前在管理员模式。管理员模式中没有检查你的余额。",
@@ -29,6 +29,7 @@
 		"label.noticeWarning": "游戏事件",
 		"label.noticeMessage": "通知信息",
 		"label.conflictingPause": "目前有另外一个全屏信息正在展示中。请在下面取消那个信息才开始新的。",
+		"label.messageWhilePause": "注意：目前有一个全屏信息展示中。有些玩家将无法看到你现在发的信息。",
 		"label.chooseBroadcastTarget": "选择目标组别：",
 		"button.broadcastGlobal": "发送给全部人",
 		"button.broadcastGroup": "发送给一个组别",

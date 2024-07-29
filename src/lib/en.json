@@ -29,6 +29,7 @@
 		"label.noticeWarning": "In-Game Events",
 		"label.noticeMessage": "Quick Notifications",
 		"label.conflictingPause": "A full screen pop-up is still active. Dismiss it below before starting a new one.",
+		"label.messageWhilePause": "Warning: A full screen pop-up is still active. Players may not be able to see the messages you send now.",
 		"label.chooseBroadcastTarget": "Choose group to send the notice to:",
 		"button.broadcastGlobal": "Global Broadcast",
 		"button.broadcastGroup": "Send to Group",

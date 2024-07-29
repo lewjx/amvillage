@@ -107,14 +107,10 @@ func NewGameState(cfg Config) (*GameState, error) {
 			copy(resourceBal, team.InitialBalance.Resources)
 			copy(gemBal, team.InitialBalance.Gems)
 		}
-		// Admin gets infinite resources and effectively infinite resources (display-wise).
 		if team.Admin {
-			for i := range gemBal {
-				gemBal[i] = 999999
-			}
-			for i := range resourceBal {
-				resourceBal[i] = 999999
-			}
+			// Admins do not have a balance.
+			resourceBal = nil
+			gemBal = nil
 		}
 		teams = append(teams, Team{
 			TeamConfig:      team,
@@ -284,12 +280,17 @@ func (state *GameState) handleTransferCommand(transfer ConnCommand) {
 		}
 	}
 	// Update To.
-	toTeam := state.Teams[cmd.To]
-	for i := range cmd.GemAmount {
-		toTeam.GemBalance[i] += cmd.GemAmount[i]
-	}
-	for i := range cmd.ResourceAmount {
-		toTeam.ResourceBalance[i] += cmd.ResourceAmount[i]
+	switch {
+	case state.cfg.Teams[cmd.To].Admin:
+		// Admins' balance does not need to be updated.
+	default:
+		toTeam := state.Teams[cmd.To]
+		for i := range cmd.GemAmount {
+			toTeam.GemBalance[i] += cmd.GemAmount[i]
+		}
+		for i := range cmd.ResourceAmount {
+			toTeam.ResourceBalance[i] += cmd.ResourceAmount[i]
+		}
 	}
 }
 

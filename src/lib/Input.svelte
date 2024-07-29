@@ -35,32 +35,35 @@
 
 	const toggleNegative = () => (sign *= -1);
 	let hold = 0;
-	let speed = 1;
+	let speed = 0.1;
+	let interval: number | null = null;
 	const setHold = (newHold: number) => {
 		hold = newHold;
-		speed = 1;
+		speed = 0.1;
+		if (interval) clearInterval(interval);
+		if (newHold !== 0) {
+			update();
+			interval = setInterval(() => update(), 200);
+		}
 	};
 
 	$: {
 		if (sign === -1 && !allowNegative) sign = 1;
 	}
 
-	const update = (hold: number) => {
+	const update = () => {
 		if (hold === 0) {
-			speed = 1;
 			return;
 		}
-		speed *= 1.1;
-		inputValue += Math.floor(speed) * hold;
+		speed *= 1.2;
+		inputValue += Math.ceil(speed) * hold;
 		const inputMax = sign === 1 ? max : -min;
 		inputValue = Math.max(Math.min(inputValue, inputMax, 999999), 0);
 		onChange();
 	};
-	onMount(() => {
-		let interval = setInterval(() => update(hold), 200);
-		return () => clearInterval(interval);
-	});
 </script>
+
+<svelte:body on:pointercancel={() => setHold(0)} on:pointerup={() => setHold(0)} />
 
 <div>
 	<button class:problematic on:click={toggleNegative}>
@@ -79,22 +82,8 @@
 	/>
 	<p class="total" class:problematic>&nbsp;/ {sign === 1 ? max : -min}</p>
 	<div class="modifier">
-		<button
-			on:click={() => update(-1)}
-			on:keypress={() => update(-1)}
-			on:pointerdown={() => setHold(-1)}
-			on:pointerup={() => setHold(0)}
-		>
-			-
-		</button>
-		<button
-			on:click={() => update(1)}
-			on:keypress={() => update(1)}
-			on:pointerdown={() => setHold(1)}
-			on:pointerup={() => setHold(0)}
-		>
-			+
-		</button>
+		<button on:pointerdown={() => setHold(-1)} on:contextmenu|preventDefault={() => {}}>-</button>
+		<button on:pointerdown={() => setHold(1)} on:contextmenu|preventDefault={() => {}}>+</button>
 	</div>
 </div>
 

@@ -1,4 +1,4 @@
-import { get, writable, type Readable, type Writable } from 'svelte/store';
+import { writable, type Readable, type Writable } from 'svelte/store';
 import { type Notice, type Score } from "$lib/score";
 
 export type LockInfo = {
@@ -92,7 +92,7 @@ const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: stri
 			state = "established"
 		}
 		const latestInfo = JSON.parse(msg.data) as WebSocketMessage
-		console.log(latestInfo)
+		console.debug(latestInfo)
 		switch (latestInfo.type) {
 			case "state":
 				store.update((session) => {
@@ -116,6 +116,5 @@ const keepWebsocketAlive = (store: Writable<Session>, name: string, secret: stri
 				})
 				break
 		}
-		console.log(get(store))
 	}
 }

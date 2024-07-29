@@ -30,6 +30,7 @@
 		session.notices.some(
 			(x) => x.level === 'pause' && !x.dismissed && typeof x.team_id !== 'number'
 		);
+	$: hasPause = session.notices.some((x) => x.level === 'pause' && !x.dismissed);
 	const send = (teamID: number | null) => {
 		const msg = JSON.stringify({
 			type: 'notice',
@@ -103,38 +104,43 @@
 			</div>
 		</div>
 	</div>
-	<div class="mx-2 flex flex-grow flex-wrap justify-center gap-2">
+	<div class="mx-2 flex flex-col gap-2">
 		{#if conflictingPause}
 			<div class="text-center text-highlight">{$_('admin.label.conflictingPause')}</div>
 		{:else}
-			<Button
-				type={messageType === 'pause' ? 'solid' : 'outline'}
-				size="md"
-				accent={currentMessageColor}
-				disabled={!hasMessage}
-				on:click={() => send(null)}
-			>
-				<GlobalBroadcastIcon />
-				{#if messageType === 'pause'}
-					{$_('admin.button.broadcastGlobalPause')}
-				{:else}
-					{$_('admin.button.broadcastGlobal')}
-				{/if}
-			</Button>
-			<Button
-				type={messageType === 'pause' ? 'solid' : 'outline'}
-				size="md"
-				accent={currentMessageColor}
-				disabled={!hasMessage}
-				on:click={groupBroadcast}
-			>
-				<GroupIcon />
-				{#if messageType === 'pause'}
-					{$_('admin.button.broadcastGroupPause')}
-				{:else}
-					{$_('admin.button.broadcastGroup')}
-				{/if}
-			</Button>
+			{#if hasPause}
+				<div class="text-center text-secondary">{$_('admin.label.messageWhilePause')}</div>
+			{/if}
+			<div class="flex flex-grow flex-wrap justify-center gap-2">
+				<Button
+					type={messageType === 'pause' ? 'solid' : 'outline'}
+					size="md"
+					accent={currentMessageColor}
+					disabled={!hasMessage}
+					on:click={() => send(null)}
+				>
+					<GlobalBroadcastIcon />
+					{#if messageType === 'pause'}
+						{$_('admin.button.broadcastGlobalPause')}
+					{:else}
+						{$_('admin.button.broadcastGlobal')}
+					{/if}
+				</Button>
+				<Button
+					type={messageType === 'pause' ? 'solid' : 'outline'}
+					size="md"
+					accent={currentMessageColor}
+					disabled={!hasMessage}
+					on:click={groupBroadcast}
+				>
+					<GroupIcon />
+					{#if messageType === 'pause'}
+						{$_('admin.button.broadcastGroupPause')}
+					{:else}
+						{$_('admin.button.broadcastGroup')}
+					{/if}
+				</Button>
+			</div>
 		{/if}
 	</div>
 </div>

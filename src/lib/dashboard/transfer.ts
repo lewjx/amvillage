@@ -10,10 +10,10 @@ export const isValid = (cfg: Config, session: Session, targetID: number, resourc
 		}
 	}
 	const isAdmin = cfg.teams[session.team_id].admin;
-	const ok = (ownArr: number[], targetArr: number[], requestedArr: number[]) => {
-		return ownArr.map((own, i) => {
-			const requested = requestedArr[i]
-			const target = targetArr[i]
+	const ok = (ownArr: undefined | number[], targetArr: undefined | number[], requestedArr: number[]) => {
+		return requestedArr.map((requested, i) => {
+			const own = ownArr ? ownArr[i] : 0
+			const target = targetArr ? targetArr[i] : 0
 			if (typeof requested !== "number") return false
 			switch (true) {
 				case requested === 0:

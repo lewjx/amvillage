@@ -10,15 +10,16 @@
 
 	let expand = cfg.teams.map((_) => false);
 	$: scores = session.score
-		.map((x, i) => {
+		.map((x, i) => ({ ...x, teamID: i }))
+		.filter((_, i) => !cfg.teams[i].admin)
+		.map((x) => {
 			const breakdown = scoreBreakdown(x);
 			return {
 				...breakdown,
-				totalScore: breakdown.minResource * breakdown.gemType,
-				teamID: i
+				totalScore: finalScore(x),
+				teamID: x.teamID
 			};
 		})
-		.filter((_, i) => !cfg.teams[i].admin)
 		.sort((x, y) => y.totalScore - x.totalScore);
 
 	const toggle = (teamID: number) => (expand[teamID] = !expand[teamID]);
