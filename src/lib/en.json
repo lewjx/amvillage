@@ -15,7 +15,9 @@
 		"label.noMessage": "Messages will appear here when something happens!",
 		"label.noPastMessage": "Press the archive button to move messages down here.",
 		"label.noPastOrPresentMessage": "You can press the archive button to move messages down here once they appear.",
-		"label.toGroup": "To {groupName}: "
+		"label.toGroup": "To {groupName}: ",
+		"label.transferSent": "{playerSender} has sent {resource} to {recipient}.",
+		"label.transferReceived": "You have received {resource} from {playerSender} ({sender})."
 	},
 	"player": {
 		"label.score": "Current Score:",

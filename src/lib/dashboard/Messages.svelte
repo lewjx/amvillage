@@ -9,19 +9,33 @@
 	export let session: Session;
 	export let messages: Notice[];
 
+	const priority = {
+		pause: 3,
+		highlight: 2,
+		warning: 1,
+		message: 0
+	};
+
 	$: isAdmin = cfg.teams[session.team_id].admin;
-	$: messageWithTeam = messages.map((x) => {
-		if (isAdmin && typeof x.team_id === 'number') {
-			return { ...x, targetTeam: cfg.teams[x.team_id].name };
-		}
-		return { ...x, targetTeam: null };
-	});
-	$: archived = messageWithTeam
-		.filter((x) => x.dismissed)
-		.sort((x, y) => y.timestamp - x.timestamp);
-	$: unarchived = messageWithTeam
-		.filter((x) => !x.dismissed)
-		.sort((x, y) => y.timestamp - x.timestamp);
+	$: preprocessedMessage = messages
+		.map((x) => {
+			if (isAdmin && typeof x.team_id === 'number') {
+				return { ...x, targetTeam: cfg.teams[x.team_id].name };
+			}
+			return { ...x, targetTeam: null };
+		})
+		.map((x) => {
+			if ('message' in x) return x;
+			return { ...x, message: $_(x.translation_key, { values: x.translation_value }) };
+		})
+		.sort((x, y) => {
+			const xPriority = priority[x.level];
+			const yPriority = priority[y.level];
+			if (xPriority != yPriority) return yPriority - xPriority;
+			return y.timestamp - x.timestamp;
+		});
+	$: archived = preprocessedMessage.filter((x) => x.dismissed);
+	$: unarchived = preprocessedMessage.filter((x) => !x.dismissed);
 
 	const adminOnly = ['pause', 'highlight'];
 	const typeToColor: { [typ: string]: 'highlight' | 'secondary' | 'primary' } = {

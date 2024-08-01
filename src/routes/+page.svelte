@@ -60,6 +60,10 @@
 	};
 </script>
 
+<svelte:head>
+	<title>{cfg.game_name}</title>
+</svelte:head>
+
 {#if sheet === 'login'}
 	<BottomSheet><Login onComplete={setWebsocket} /></BottomSheet>
 {:else}

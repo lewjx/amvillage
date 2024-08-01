@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
 	"time"
 )
 
@@ -37,12 +38,26 @@ type Notice struct {
 	ID        int         `json:"id"`
 	Timestamp int         `json:"timestamp"`
 	Level     NoticeLevel `json:"level"`
-	Message   string      `json:"message"`
 	Dismissed bool        `json:"dismissed,omitempty"`
 	// TeamID is the intended recipient of the notice. If not specified, it
 	// will be sent to everyone.
 	TeamID *int `json:"team_id,omitempty"`
+
+	// Message or (TranslationKey and TranslationValue) will be present.
+	Message          string            `json:"message,omitempty"`
+	TranslationKey   string            `json:"translation_key,omitempty"`
+	TranslationValue map[string]string `json:"translation_value,omitempty"`
+
+	// skipAdmin is set to true if the notice does not need to be sent to the
+	// admins.
+	skipAdmin bool
 }
+
+// Sync with frontend: src/lib/{en,zh}.json.
+const (
+	TranslationTransferSent     = "dashboard.label.transferSent"
+	TranslationTransferReceived = "dashboard.label.transferReceived"
+)
 
 type NoticeStatusUpdate struct {
 	ID        int  `json:"id"`
@@ -292,8 +307,54 @@ func (state *GameState) handleTransferCommand(transfer ConnCommand) {
 			toTeam.ResourceBalance[i] += cmd.ResourceAmount[i]
 		}
 	}
+	// Send notices.
+	noticeID := state.nextNoticeID
+	state.nextNoticeID++
+	resources := make([]string, 0, len(state.cfg.ResourceNames)+len(state.cfg.GemNames))
+	for i, v := range cmd.GemAmount {
+		if v != 0 {
+			resources = append(resources, fmt.Sprintf("%dx %s", v, state.cfg.GemNames[i]))
+		}
+	}
+	for i, v := range cmd.ResourceAmount {
+		if v != 0 {
+			resources = append(resources, fmt.Sprintf("%dx %s", v, state.cfg.ResourceNames[i]))
+		}
+	}
+	resourceCombined := strings.Join(resources, ", ")
+	state.sendNotice(Notice{
+		ID:             noticeID,
+		Timestamp:      int(time.Now().Unix()),
+		Level:          NoticeMessage,
+		TeamID:         &cmd.From,
+		TranslationKey: TranslationTransferSent,
+		TranslationValue: map[string]string{
+			"playerSender": transfer.Conn.Nickname,
+			"recipient":    state.cfg.Teams[cmd.To].Name,
+			"resource":     resourceCombined,
+		},
+		skipAdmin: true,
+	})
+	state.sendNotice(Notice{
+		ID:             noticeID,
+		Timestamp:      int(time.Now().Unix()),
+		Level:          NoticeMessage,
+		TeamID:         &cmd.To,
+		TranslationKey: TranslationTransferReceived,
+		TranslationValue: map[string]string{
+			"playerSender": transfer.Conn.Nickname,
+			"sender":       state.cfg.Teams[cmd.From].Name,
+			"resource":     resourceCombined,
+		},
+		skipAdmin: true,
+	})
 }
 
 func (notice Notice) AppliesTo(conn *Conn, s *GameState) bool {
-	return notice.TeamID == nil || *notice.TeamID == conn.TeamID || s.cfg.Teams[conn.TeamID].Admin
+	// The player is an admin and this notice is not skipped for admin.
+	if s.cfg.Teams[conn.TeamID].Admin && !notice.skipAdmin {
+		return true
+	}
+	// The notice belongs to the team.
+	return notice.TeamID == nil || *notice.TeamID == conn.TeamID
 }

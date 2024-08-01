@@ -1,6 +1,7 @@
 package main
 
 type Config struct {
+	GameName          string       `json:"game_name"`
 	Language          string       `json:"language"`
 	Teams             []TeamConfig `json:"teams"`
 	ResourceNames     []string     `json:"resource_names"`

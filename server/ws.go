@@ -132,7 +132,6 @@ func (state *GameState) handleWebsocket(w http.ResponseWriter, req *http.Request
 		default:
 			panic(fmt.Sprintf("unknown command type: %T", cmd))
 		}
-		// TODO: Authentication/Check permission
 		state.msg <- ConnCommand{
 			Conn:    conn,
 			Command: cmd,

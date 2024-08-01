@@ -15,7 +15,9 @@
 		"label.noMessage": "新的信息将在这里出现！",
 		"label.noPastMessage": "在上面的信息按下收藏键即可把信息移下来。",
 		"label.noPastOrPresentMessage": "上面有信息的时候，你可以把上面的信息移来这里。",
-		"label.toGroup": "致{groupName}："
+		"label.toGroup": "致{groupName}：",
+		"label.transferSent": "{playerSender} 转走了 {resource} 给 {recipient}。",
+		"label.transferReceived": "你从 {playerSender}（{sender}）收到了 {resource}。"
 	},
 	"player": {
 		"label.score": "分数：",
