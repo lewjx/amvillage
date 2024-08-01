@@ -17,11 +17,15 @@
 		"label.noPastOrPresentMessage": "上面有信息的时候，你可以把上面的信息移来这里。",
 		"label.toGroup": "致{groupName}：",
 		"label.transferSent": "{playerSender} 转走了 {resource} 给 {recipient}。",
-		"label.transferReceived": "你从 {playerSender}（{sender}）收到了 {resource}。"
+		"label.transferReceived": "你从 {playerSender}（{sender}）收到了 {resource}。",
+		"button.send": "转账",
+		"button.tutorial": "教程"
 	},
 	"player": {
 		"label.score": "分数：",
-		"label.pastMessages": "已归档的信息"
+		"label.pastMessages": "已归档的信息",
+		"label.tutorial": "教程",
+		"label.tutorialContent": "核心：在这个游戏中会有许多任务NPC，大家可以到每一个NPC完成任务后就能获得资源。\n资源：这个游戏中有六种资源，最后分数我们会用你们最少的资源计算。如果你大部分资源有100个可是其中一种只有1个，最后就只会有一分。游戏过程中你们可以自由交易这些资源。\n交易：每一组现在应该有一个链接（就是你现在看着的网站）。你们可以通过这个链接看到你们有多少资源并且把你的资源转给其他的组。\n宝石：除了普通资源以外，在游戏开始的时候，你们将获得属于自己组的4颗宝石。这个宝石可以让你们的分数翻倍。你们有一种宝石的话，分数就是乘一；你们有两种宝石的话，分数就是乘二；三种就乘三，以此类推。这里给个友情提示：不要把你们每一颗宝石交易出去哦，如果最后一颗宝石都没有就是乘零。\n偷窃：最后，今年这个游戏有偷窃的机制，所以记得到银行做好安保措施哦！不然到最后你们做任务拿到的资源可能不翼而飞。宝石不能被偷走，我们没有那么糟糕，不用担心。\n\n祝大家好运，游戏现在开始。 "
 	},
 	"admin": {
 		"label.header": "你目前在管理员模式。管理员模式中没有检查你的余额。",

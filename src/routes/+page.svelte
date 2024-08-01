@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { type Readable } from 'svelte/store';
+	import { locale } from 'svelte-i18n';
 
 	import BottomSheet from '$lib/BottomSheet.svelte';
 	import ConnectionError from '$lib/ConnectionError.svelte';
@@ -11,7 +12,7 @@
 	import PlayerView from './PlayerView.svelte';
 	import AdminView from './AdminView.svelte';
 	import AdminSelectGroup from '$lib/dashboard/AdminSelectGroup.svelte';
-	import { locale } from 'svelte-i18n';
+	import Tutorial from '$lib/dashboard/Tutorial.svelte';
 
 	let sheet: 'login' | 'send' | 'tutorial' | 'error' | 'select_group' | undefined = 'login';
 	let teamID: number;
@@ -73,7 +74,7 @@
 		<PlayerView {cfg} {session} {openSend} {openTutorial} />
 	{/if}
 	{#if sheet === 'tutorial'}
-		<BottomSheet onClose={closeSheet}>Tutorial</BottomSheet>
+		<BottomSheet onClose={closeSheet}><Tutorial /></BottomSheet>
 	{:else if sheet === 'send'}
 		<BottomSheet onClose={closeSheet}>
 			<Transfer session={$session} {cfg} teamSelected={teamID} close={closeSheet} />

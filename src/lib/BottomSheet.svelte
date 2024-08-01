@@ -42,7 +42,7 @@
 		@apply pointer-events-auto select-auto;
 	}
 	.sheet-container {
-		@apply fixed bottom-0 left-0 right-0 h-[80vh] bg-background p-4;
+		@apply fixed bottom-0 left-0 right-0 h-[80vh] overflow-auto bg-background p-4;
 		@apply pointer-events-auto select-auto;
 	}
 	.close-row {

@@ -17,11 +17,15 @@
 		"label.noPastOrPresentMessage": "You can press the archive button to move messages down here once they appear.",
 		"label.toGroup": "To {groupName}: ",
 		"label.transferSent": "{playerSender} has sent {resource} to {recipient}.",
-		"label.transferReceived": "You have received {resource} from {playerSender} ({sender})."
+		"label.transferReceived": "You have received {resource} from {playerSender} ({sender}).",
+		"button.send": "Send",
+		"button.tutorial": "Tutorial"
 	},
 	"player": {
 		"label.score": "Current Score:",
-		"label.pastMessages": "Past Messages"
+		"label.pastMessages": "Past Messages",
+		"label.tutorial": "Tutorial",
+		"label.tutorialContent": "Core: There are a lot of quest NPCs in this game and you can earn resources by completing the NPC's quest.\nResources: There are six types of resources in this game and we will be using the fewest resource you have in the final score calculation. If you have 100 of most resources but you only own 1 for one of the types, you will get 1 point. You are free to trade these resources throughout the game.\nTrading: Every group should have received a link (you are looking at that link now!). You can use this link to see how much resources you have and transfer to other groups.\nGems: Other than normal resources, we also have gems. When the game starts, each group will receive 4 gems for their own group. This gem acts as a multiplier. If you have one type of gems, it's a 1x multiplier. If you have two types, it's a 2x multiplier, three types is 3x etc. Here is a tip: DO NOT trade every single one of your gem away. If you have no gems at all, that's a 0x multiplier.\nRobbery: This game has a stealing mechanic this year, please make sure you secure your bank! Your resources might disappear otherwise. We're not *that* horrible so gems cannot be stolen.\n\nThat is all the rules. The game starts now."
 	},
 	"admin": {
 		"label.header": "You are in administrator mode. Permission checks have been disabled.",
