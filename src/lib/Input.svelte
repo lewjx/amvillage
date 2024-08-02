@@ -77,7 +77,7 @@
 		min="0"
 		{max}
 		on:input={capValue}
-		on:focus={clearValue}
+		on:click={clearValue}
 		on:blur={capValue}
 	/>
 	<p class="total" class:problematic>&nbsp;/ {sign === 1 ? max : -min}</p>
