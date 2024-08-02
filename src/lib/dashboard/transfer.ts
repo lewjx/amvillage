@@ -2,11 +2,11 @@ import type { Config } from '$lib/score';
 import type { Session } from '$lib/login/login';
 
 export const isValid = (cfg: Config, session: Session, targetID: number, resourceCount: number[], gemCount: number[]) => {
-	if (targetID < 0) {
+	if (targetID < 0 || targetID >= cfg.teams.length) {
 		// If target is invalid, nothing is valid.
 		return {
-			resource: session.score[session.team_id].resources.map(_ => false),
-			gem: session.score[session.team_id].gems.map(_ => false),
+			resource: cfg.resource_names.map(_ => false),
+			gem: cfg.gem_names.map(_ => false),
 		}
 	}
 	const isAdmin = cfg.teams[session.team_id].admin;
