@@ -8,7 +8,8 @@
 		"button.sendBanner": "发送",
 		"button.hideBanner": "隐藏",
 		"label.chargeAll": "全体扣除",
-		"button.charge": "扣除"
+		"button.charge": "扣除",
+		"text.chargeSuccess": "扣除成功！"
 	},
 	"login": {
 		"text.welcome": "欢迎来到仙泽庄！",

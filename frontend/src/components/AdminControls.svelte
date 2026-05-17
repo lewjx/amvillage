@@ -18,6 +18,8 @@
 	}
 	const chargeAll = () => {
 		$ws.send(`charge_all ${chargeResource} ${chargeAmount}`)
+		alert($_("admin.text.chargeSuccess"))
+		chargeAmount = 0
 	}
 </script>
 

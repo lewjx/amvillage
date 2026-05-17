@@ -8,7 +8,8 @@
 		"button.sendBanner": "Send",
 		"button.hideBanner": "Hide",
 		"label.chargeAll": "Deduct All",
-		"button.charge": "Deduct"
+		"button.charge": "Deduct",
+		"text.chargeSuccess": "Successfully deducted!"
 	},
 	"login": {
 		"text.welcome": "Welcome to AmVillage!",
