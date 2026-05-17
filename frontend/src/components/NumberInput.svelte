@@ -65,22 +65,22 @@
 		@apply flex;
 	}
 	button {
-		@apply inline-flex w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white items-center justify-center text-2xl font-bold rounded-xl transition-all duration-300;
+		@apply inline-flex w-12 h-12 bg-slate-200 text-slate-700 items-center justify-center text-2xl font-bold rounded-xl transition-all duration-200;
 	}
 	button:hover {
-		@apply bg-white/20 scale-[1.05] border-white/40;
+		@apply bg-slate-300 scale-[1.05];
 	}
 	button:active {
-		@apply bg-white/5 scale-95;
+		@apply bg-slate-400 scale-95;
 	}
 	button:disabled {
-		@apply bg-black/20 text-white/30 border-white/5 shadow-none scale-100 cursor-not-allowed;
+		@apply bg-slate-100 text-slate-300 scale-100 cursor-not-allowed;
 	}
 	input {
-		@apply bg-black/20 border border-white/20 text-white mx-1 p-1 w-20 h-12 text-center text-2xl font-semibold rounded-xl outline-none transition-all;
+		@apply bg-white border border-slate-300 text-slate-900 mx-1 p-1 w-20 h-12 text-center text-2xl font-semibold rounded-xl outline-none transition-all shadow-sm;
 	}
 	input:focus {
-		@apply ring-2 ring-indigo-400/50 border-indigo-400;
+		@apply ring-2 ring-violet-500/20 border-violet-500;
 	}
 
 	/* Reset. */

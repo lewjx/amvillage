@@ -33,13 +33,13 @@
 
 <style lang="postcss">
 	* {
-		@apply text-white;
+		@apply text-slate-800;
 	}
 	.summary {
-		@apply text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-100 drop-shadow-md py-2;
+		@apply text-6xl font-extrabold text-violet-600 py-2;
 	}
 	hr {
-		@apply border-white/20 w-full;
+		@apply border-slate-200 w-full;
 	}
 	table {
 		@apply mx-auto border-separate border-spacing-x-4 border-spacing-y-2;
@@ -48,12 +48,12 @@
 		@apply text-left text-xl font-medium;
 	}
 	.isMin td {
-		@apply text-red-400;
+		@apply text-red-500;
 	}
 	.gem {
-		@apply flex flex-wrap gap-x-6 gap-y-2 items-center justify-center text-lg font-semibold bg-white/5 p-4 rounded-2xl w-full border border-white/10;
+		@apply flex flex-wrap gap-x-6 gap-y-2 items-center justify-center text-lg font-semibold bg-slate-50 p-4 rounded-2xl w-full border border-slate-100;
 	}
 	.noGem {
-		@apply text-red-400;
+		@apply text-red-500;
 	}
 </style>

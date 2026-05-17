@@ -70,7 +70,7 @@
 		@apply px-4;
 	}
 	.balance {
-		@apply flex flex-col items-center bg-white/10 backdrop-blur-xl border border-white/20 text-white text-center gap-6 p-8 rounded-3xl shadow-2xl;
+		@apply flex flex-col items-center bg-white border border-slate-100 text-slate-900 text-center gap-6 p-8 rounded-3xl shadow-xl shadow-slate-200/50;
 	}
 	.trade {
 		@apply flex flex-wrap gap-4 justify-center;

@@ -89,25 +89,25 @@
 		@apply p-4 flex flex-col gap-8 h-full w-full max-w-2xl mx-auto;
 	}
 	.content {
-		@apply flex-grow flex flex-col gap-8 bg-white/10 backdrop-blur-xl border border-white/20 p-6 rounded-3xl shadow-2xl;
+		@apply flex-grow flex flex-col gap-8 bg-white border border-slate-100 p-6 rounded-3xl shadow-xl shadow-slate-200/50;
 	}
 	.error {
-		@apply grid justify-center items-center text-red-400 font-bold text-3xl h-full text-center;
+		@apply grid justify-center items-center text-red-500 font-bold text-3xl h-full text-center;
 	}
 	.trade {
-		@apply flex flex-col gap-8 text-white;
+		@apply flex flex-col gap-8 text-slate-900;
 	}
 	.trade > div {
 		@apply flex flex-col items-center w-full;
 	}
 	.explainer {
-		@apply text-4xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-100;
+		@apply text-4xl font-bold text-center text-violet-700;
 	}
 	.lock {
-		@apply text-indigo-200 font-medium text-lg mt-2;
+		@apply text-violet-500 font-medium text-lg mt-2;
 	}
 	hr {
-		@apply w-full border-white/20 my-4;
+		@apply w-full border-slate-200 my-4;
 	}
 	.trade .control {
 		@apply grid gap-x-6 gap-y-4 items-center justify-center w-full text-xl font-semibold;
@@ -117,12 +117,12 @@
 		@apply sticky bottom-4 flex flex-col gap-3 mt-4;
 	}
 	.confirm {
-		@apply bg-gradient-to-r from-emerald-400 to-green-500 text-white font-bold text-2xl w-full p-4 rounded-2xl transition-all duration-300 shadow-[0_0_15px_rgba(52,211,153,0.5)];
+		@apply bg-emerald-500 text-white font-bold text-2xl w-full p-4 rounded-2xl transition-all duration-300 shadow-lg shadow-emerald-500/30;
 	}
 	.confirm:hover {
-		@apply scale-[1.02] shadow-[0_0_25px_rgba(52,211,153,0.7)];
+		@apply bg-emerald-600 scale-[1.02] shadow-emerald-500/40;
 	}
 	.confirm:disabled {
-		@apply bg-white/10 text-white/30 shadow-none scale-100 cursor-not-allowed border border-white/5;
+		@apply bg-slate-200 text-slate-400 shadow-none scale-100 cursor-not-allowed border-none;
 	}
 </style>

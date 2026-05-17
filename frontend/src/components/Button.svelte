@@ -8,15 +8,15 @@
 <style lang="postcss">
 	button {
 		@apply px-6 py-3 rounded-2xl cursor-pointer transition-all duration-300 text-lg font-semibold;
-		@apply bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg;
+		@apply bg-violet-600 text-white shadow-md shadow-violet-600/30;
 	}
 	button:hover {
-		@apply bg-white/20 scale-[1.02] border-white/40 shadow-indigo-500/25;
+		@apply bg-violet-700 scale-[1.02] shadow-lg shadow-violet-600/40;
 	}
 	button:active {
-		@apply bg-white/5 scale-95;
+		@apply bg-violet-800 scale-95;
 	}
 	button:disabled {
-		@apply bg-black/20 text-white/30 border-white/5 shadow-none scale-100 cursor-not-allowed;
+		@apply bg-slate-200 text-slate-400 shadow-none scale-100 cursor-not-allowed;
 	}
 </style>

@@ -54,24 +54,24 @@
 		@apply flex flex-col items-center justify-center w-full h-full p-4;
 	}
 	.glass-card {
-		@apply bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-6 w-full max-w-md;
+		@apply bg-white border border-slate-100 p-8 rounded-3xl shadow-xl shadow-slate-200/50 flex flex-col items-center gap-6 w-full max-w-md;
 	}
 	h1 {
-		@apply font-bold text-4xl text-center text-white mb-2;
+		@apply font-bold text-4xl text-center text-slate-900 mb-2;
 	}
 	.input-group {
 		@apply flex flex-col gap-2 w-full;
 	}
 	label {
-		@apply text-white/80 font-medium ml-1;
+		@apply text-slate-600 font-medium ml-1;
 	}
 	input {
-		@apply bg-black/20 border border-white/20 p-4 text-lg w-full text-white placeholder-white/40 rounded-2xl outline-none transition-all;
+		@apply bg-slate-50 border border-slate-200 p-4 text-lg w-full text-slate-900 placeholder-slate-400 rounded-2xl outline-none transition-all;
 	}
 	input:focus {
-		@apply ring-2 ring-indigo-400/50 border-indigo-400;
+		@apply ring-4 ring-violet-500/10 border-violet-500 bg-white;
 	}
 	.error {
-		@apply text-red-400 font-semibold mt-[-10px];
+		@apply text-red-500 font-semibold mt-[-10px];
 	}
 </style>

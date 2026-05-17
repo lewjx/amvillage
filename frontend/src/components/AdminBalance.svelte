@@ -48,19 +48,19 @@
 
 <style lang="postcss">
 	.table-container {
-		@apply relative max-w-full overflow-x-auto border border-white/20 rounded-2xl bg-black/20 shadow-inner;
+		@apply relative max-w-full overflow-x-auto border border-slate-200 rounded-2xl bg-white shadow-sm;
 	}
 	table {
-		@apply border-separate border-spacing-0 w-full text-sm;
+		@apply border-separate border-spacing-0 w-full text-sm text-slate-800;
 	}
 	th,
 	td {
-		@apply px-4 py-3 border-b border-r border-white/10 min-w-[3rem] text-center font-medium;
+		@apply px-4 py-3 border-b border-r border-slate-200 min-w-[3rem] text-center font-medium;
 	}
 	.first {
-		@apply sticky left-0 bg-[#1E1B4B] min-w-[6rem] text-left border-r-white/20 shadow-[2px_0_5px_rgba(0,0,0,0.2)];
+		@apply sticky left-0 bg-slate-50 min-w-[6rem] text-left border-r-slate-300 shadow-[2px_0_5px_rgba(0,0,0,0.05)];
 	}
 	.zero {
-		@apply text-red-400;
+		@apply text-red-500;
 	}
 </style>
