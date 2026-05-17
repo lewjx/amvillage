@@ -53,25 +53,31 @@
 					{/if}
 					<hr />
 				</div>
-				<div class="control">
-					{#each $state.config.currencies as currency, i}
-						<span>{currency}</span>
-						<NumberInput
-							min={isAdmin ? -$state.balances[target][i] : 0}
-							max={isAdmin ? undefined : $state.balances[$state.team][i]}
-							bind:value={value[i]}
-						/>
-					{/each}
+				<div class="resource-group">
+					<h3>{$_("trade.label.currencies")}</h3>
+					<div class="control">
+						{#each $state.config.currencies as currency, i}
+							<span>{currency}</span>
+							<NumberInput
+								min={isAdmin ? -$state.balances[target][i] : 0}
+								max={isAdmin ? undefined : $state.balances[$state.team][i]}
+								bind:value={value[i]}
+							/>
+						{/each}
+					</div>
 				</div>
-				<div class="control">
-					{#each $state.config.gems as gem, i}
-						<span>{gem}</span>
-						<NumberInput
-							min={isAdmin ? -$state.balances[$state.team][currencyCount + i] : 0}
-							max={isAdmin ? undefined : $state.balances[$state.team][currencyCount + i]}
-							bind:value={gemValue[i]}
-						/>
-					{/each}
+				<div class="resource-group">
+					<h3>{$_("trade.label.materials")}</h3>
+					<div class="control">
+						{#each $state.config.gems as gem, i}
+							<span>{gem}</span>
+							<NumberInput
+								min={isAdmin ? -$state.balances[$state.team][currencyCount + i] : 0}
+								max={isAdmin ? undefined : $state.balances[$state.team][currencyCount + i]}
+								bind:value={gemValue[i]}
+							/>
+						{/each}
+					</div>
 				</div>
 			</div>
 		{/if}
@@ -108,6 +114,12 @@
 	}
 	hr {
 		@apply w-full border-slate-200 my-4;
+	}
+	.resource-group {
+		@apply w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col items-center;
+	}
+	.resource-group h3 {
+		@apply text-2xl font-bold text-center text-slate-700 mb-6 border-b-2 border-slate-200 w-full pb-2;
 	}
 	.trade .control {
 		@apply grid gap-x-6 gap-y-4 items-center justify-center w-full text-xl font-semibold;

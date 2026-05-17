@@ -33,6 +33,8 @@
 		"error.othersTrading": "<b>{username}</b>正在交易中",
 		"error.timeout": "交易失败，请重新尝试",
 		"title": "转账至{target}",
+		"label.currencies": "货币",
+		"label.materials": "物资",
 		"timeRemaining": "您剩下<b>{sec, number}</b>秒",
 		"button.confirm": "成交",
 		"button.cancel": "回到主页面"

@@ -33,6 +33,8 @@
 		"error.othersTrading": "<b>{username}</b> is currently trading",
 		"error.timeout": "Trading failed, please try again",
 		"title": "Transfer to {target}",
+		"label.currencies": "Currencies",
+		"label.materials": "Materials",
 		"timeRemaining": "You have <b>{sec, number}</b> seconds left",
 		"button.confirm": "Confirm",
 		"button.cancel": "Return to Main Menu"
