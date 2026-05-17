@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "VITE_BACKEND=\"http://localhost:8080\" vite",
+    "dev": "VITE_BACKEND=\"\" vite",
     "build": "VITE_BACKEND=\".\" vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
