@@ -13,6 +13,15 @@
 		$creds = { username, password }
 	}
 
+	const handleKeydown = (e: KeyboardEvent) => {
+		if (e.key === "Enter") {
+			(e.target as HTMLElement).blur()
+			if (username && password) {
+				logon()
+			}
+		}
+	}
+
 	$: {
 		if ($state.username) {
 			$status = {
@@ -32,6 +41,7 @@
 				type="text"
 				autocomplete="off"
 				bind:value={username}
+				on:keydown={handleKeydown}
 				placeholder={$_("login.placeholder.username")}
 			/>
 		</div>
@@ -41,6 +51,7 @@
 				id="password"
 				type="password"
 				bind:value={password}
+				on:keydown={handleKeydown}
 				placeholder={$_("login.placeholder.password")}
 			/>
 		</div>

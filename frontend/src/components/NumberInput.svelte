@@ -40,6 +40,12 @@
 	const update = () => {
 		value = cap(value ?? 0)
 	}
+
+	const handleKeydown = (e: KeyboardEvent) => {
+		if (e.key === "Enter") {
+			(e.target as HTMLElement).blur()
+		}
+	}
 </script>
 
 <div>
@@ -50,7 +56,7 @@
 		on:touchend|preventDefault={release}
 		disabled={typeof min === "number" && (value ?? 0) <= min}>−</button
 	>
-	<input type="number" inputmode="numeric" {min} {max} bind:value on:change={update} />
+	<input type="number" inputmode="numeric" {min} {max} bind:value on:change={update} on:keydown={handleKeydown} />
 	<button
 		on:mousedown={hold(1)}
 		on:mouseup={release}
