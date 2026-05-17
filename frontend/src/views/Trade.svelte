@@ -109,7 +109,7 @@
 
 <style lang="postcss">
 	main {
-		@apply p-4 flex flex-col gap-8 h-full w-full max-w-2xl mx-auto;
+		@apply p-4 flex flex-col gap-6 w-full max-w-2xl mx-auto min-h-full;
 	}
 	.content {
 		@apply flex-grow flex flex-col gap-8 bg-white border border-slate-100 p-6 rounded-3xl shadow-xl shadow-slate-200/50;
@@ -149,7 +149,7 @@
 		grid-template-columns: auto auto;
 	}
 	.buttons {
-		@apply sticky bottom-4 flex flex-col gap-3 mt-4;
+		@apply flex flex-col gap-3 mt-4 w-full;
 	}
 	.confirm {
 		@apply bg-emerald-500 text-white font-bold text-2xl w-full p-4 rounded-2xl transition-all duration-300 shadow-lg shadow-emerald-500/30;

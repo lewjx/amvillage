@@ -3,7 +3,7 @@
 @tailwind base;
 
 #app {
-	@apply h-screen overflow-y-auto flex flex-col;
+	@apply h-[100dvh] overflow-y-auto flex flex-col;
 	@apply bg-slate-50 text-slate-900;
 	font-family: 'Outfit', sans-serif;
 }
