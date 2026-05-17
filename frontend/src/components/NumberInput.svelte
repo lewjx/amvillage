@@ -65,13 +65,13 @@
 		@apply flex;
 	}
 	button {
-		@apply inline-flex w-8 h-8 bg-black text-white items-center justify-center;
+		@apply inline-flex w-12 h-12 bg-black text-white items-center justify-center text-2xl font-bold rounded-md;
 	}
 	button:disabled {
 		@apply bg-gray-300 text-gray-700;
 	}
 	input {
-		@apply border border-black p-1 w-16 h-8 text-center;
+		@apply border border-black mx-1 p-1 w-20 h-12 text-center text-xl rounded-md;
 	}
 
 	/* Reset. */

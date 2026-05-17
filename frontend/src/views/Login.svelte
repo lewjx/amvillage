@@ -45,10 +45,10 @@
 		@apply font-semibold text-3xl text-center;
 	}
 	div {
-		@apply flex gap-2 items-center justify-center;
+		@apply flex flex-col gap-2 items-center justify-center w-full max-w-sm;
 	}
 	input {
-		@apply border border-black p-2;
+		@apply border border-black p-3 text-lg w-full text-center rounded-lg;
 	}
 	.error {
 		@apply text-red-600 font-semibold;

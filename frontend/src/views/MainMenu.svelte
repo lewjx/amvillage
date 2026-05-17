@@ -70,10 +70,10 @@
 		@apply px-4;
 	}
 	.balance {
-		@apply flex flex-col items-center bg-purple-800 text-white text-center gap-2 p-4;
+		@apply flex flex-col items-center bg-purple-800 text-white text-center gap-4 p-6 rounded-xl shadow-md;
 	}
 	.trade {
-		@apply flex flex-wrap gap-2 justify-center;
+		@apply flex flex-wrap gap-4 justify-center;
 	}
 	.error {
 		@apply text-red-800;
