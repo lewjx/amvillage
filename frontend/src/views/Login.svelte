@@ -23,44 +23,55 @@
 </script>
 
 <main transition:fly={{ y: 500 }}>
-	<h1>{$_("login.text.welcome")}</h1>
-	<div>
-		<label for="username">{$_("login.label.username")}</label>
-		<input
-			id="username"
-			type="text"
-			autocomplete="off"
-			bind:value={username}
-			placeholder={$_("login.placeholder.username")}
-		/>
+	<div class="glass-card">
+		<h1>{$_("login.text.welcome")}</h1>
+		<div class="input-group">
+			<label for="username">{$_("login.label.username")}</label>
+			<input
+				id="username"
+				type="text"
+				autocomplete="off"
+				bind:value={username}
+				placeholder={$_("login.placeholder.username")}
+			/>
+		</div>
+		<div class="input-group">
+			<label for="password">{$_("login.label.password")}</label>
+			<input
+				id="password"
+				type="password"
+				bind:value={password}
+				placeholder={$_("login.placeholder.password")}
+			/>
+		</div>
+		<Button on:click={logon} disabled={!username || !password}>{$_("login.button.start")}</Button>
+		<div class="error">{$error}&nbsp;</div>
 	</div>
-	<div>
-		<label for="password">{$_("login.label.password")}</label>
-		<input
-			id="password"
-			type="password"
-			bind:value={password}
-			placeholder={$_("login.placeholder.password")}
-		/>
-	</div>
-	<Button on:click={logon} disabled={!username || !password}>{$_("login.button.start")}</Button>
-	<div class="error">{$error}&nbsp;</div>
 </main>
 
 <style lang="postcss">
 	main {
-		@apply flex flex-col items-center justify-center gap-4 w-full h-full;
+		@apply flex flex-col items-center justify-center w-full h-full p-4;
+	}
+	.glass-card {
+		@apply bg-white/10 backdrop-blur-xl border border-white/20 p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-6 w-full max-w-md;
 	}
 	h1 {
-		@apply font-semibold text-3xl text-center;
+		@apply font-bold text-4xl text-center text-white mb-2;
 	}
-	div {
-		@apply flex flex-col gap-2 items-center justify-center w-full max-w-sm;
+	.input-group {
+		@apply flex flex-col gap-2 w-full;
+	}
+	label {
+		@apply text-white/80 font-medium ml-1;
 	}
 	input {
-		@apply border border-black p-3 text-lg w-full text-center rounded-lg;
+		@apply bg-black/20 border border-white/20 p-4 text-lg w-full text-white placeholder-white/40 rounded-2xl outline-none transition-all;
+	}
+	input:focus {
+		@apply ring-2 ring-indigo-400/50 border-indigo-400;
 	}
 	.error {
-		@apply text-red-600 font-semibold;
+		@apply text-red-400 font-semibold mt-[-10px];
 	}
 </style>

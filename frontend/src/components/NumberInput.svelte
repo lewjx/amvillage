@@ -65,13 +65,22 @@
 		@apply flex;
 	}
 	button {
-		@apply inline-flex w-12 h-12 bg-black text-white items-center justify-center text-2xl font-bold rounded-md;
+		@apply inline-flex w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 text-white items-center justify-center text-2xl font-bold rounded-xl transition-all duration-300;
+	}
+	button:hover {
+		@apply bg-white/20 scale-[1.05] border-white/40;
+	}
+	button:active {
+		@apply bg-white/5 scale-95;
 	}
 	button:disabled {
-		@apply bg-gray-300 text-gray-700;
+		@apply bg-black/20 text-white/30 border-white/5 shadow-none scale-100 cursor-not-allowed;
 	}
 	input {
-		@apply border border-black mx-1 p-1 w-20 h-12 text-center text-xl rounded-md;
+		@apply bg-black/20 border border-white/20 text-white mx-1 p-1 w-20 h-12 text-center text-2xl font-semibold rounded-xl outline-none transition-all;
+	}
+	input:focus {
+		@apply ring-2 ring-indigo-400/50 border-indigo-400;
 	}
 
 	/* Reset. */

@@ -43,7 +43,8 @@ export const state = writable<State>({
 
 export const connected = writable(false)
 export const error = writable("")
-export const creds = writable<Cred|null>(null)
+const initialCreds = localStorage.getItem("creds") ? JSON.parse(localStorage.getItem("creds") as string) : null
+export const creds = writable<Cred|null>(initialCreds)
 
 export const ws = writable<WebSocket>()
 
@@ -56,7 +57,14 @@ const tryLogin = () => {
 	}
 }
 
-creds.subscribe(() => tryLogin())
+creds.subscribe((c) => {
+	if (c) {
+		localStorage.setItem("creds", JSON.stringify(c))
+	} else {
+		localStorage.removeItem("creds")
+	}
+	tryLogin()
+})
 
 export const connect = () => {
 	const url = new URL((import.meta.env.VITE_BACKEND || "") + "/ws", location.href)

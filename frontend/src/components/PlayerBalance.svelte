@@ -36,24 +36,24 @@
 		@apply text-white;
 	}
 	.summary {
-		@apply text-4xl;
+		@apply text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-200 to-indigo-100 drop-shadow-md py-2;
 	}
 	hr {
-		@apply border-gray-400;
+		@apply border-white/20 w-full;
 	}
 	table {
-		@apply mx-auto border-separate border-spacing-x-2;
+		@apply mx-auto border-separate border-spacing-x-4 border-spacing-y-2;
 	}
 	tr {
-		@apply text-left;
+		@apply text-left text-xl font-medium;
 	}
 	.isMin td {
-		@apply text-red-300;
+		@apply text-red-400;
 	}
 	.gem {
-		@apply flex flex-wrap gap-x-5 gap-y-0.5 items-center justify-center;
+		@apply flex flex-wrap gap-x-6 gap-y-2 items-center justify-center text-lg font-semibold bg-white/5 p-4 rounded-2xl w-full border border-white/10;
 	}
 	.noGem {
-		@apply text-red-300;
+		@apply text-red-400;
 	}
 </style>
