@@ -1,10 +1,12 @@
 <script lang="ts">
 	import { _ } from "svelte-i18n"
 	import Button from "../components/Button.svelte"
-	import { ws } from "../lib/amvillage"
+	import { state, ws } from "../lib/amvillage"
 
 	let notice = ""
 	let popup = ""
+	let chargeAmount = 0
+	let chargeResource = 0
 	const sendNotice = () => {
 		$ws.send("notice " + notice)
 	}
@@ -13,6 +15,9 @@
 	}
 	const hidePopup = () => {
 		$ws.send("popup")
+	}
+	const chargeAll = () => {
+		$ws.send(`charge_all ${chargeResource} ${chargeAmount}`)
 	}
 </script>
 
@@ -26,6 +31,19 @@
 		<Button on:click={sendPopup}>{$_("admin.button.sendBanner")}</Button>
 		<Button on:click={hidePopup}>{$_("admin.button.hideBanner")}</Button>
 	</div>
+	<span>{$_("admin.label.chargeAll")}</span>
+	<div class="flex flex-wrap items-center gap-2">
+		<input type="number" bind:value={chargeAmount} class="w-16" min="0" />
+		<select bind:value={chargeResource} class="border border-black p-1">
+			{#each $state.config.currencies as cur, i}
+				<option value={i}>{cur}</option>
+			{/each}
+			{#each $state.config.gems as gem, i}
+				<option value={$state.config.currencies.length + i}>{gem}</option>
+			{/each}
+		</select>
+	</div>
+	<Button on:click={chargeAll} disabled={chargeAmount < 0}>{$_("admin.button.charge")}</Button>
 </div>
 
 <style lang="postcss">

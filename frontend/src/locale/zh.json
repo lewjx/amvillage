@@ -6,7 +6,9 @@
 		"label.given": "{team} （给的数量）",
 		"button.sendNotice": "发送",
 		"button.sendBanner": "发送",
-		"button.hideBanner": "隐藏"
+		"button.hideBanner": "隐藏",
+		"label.chargeAll": "全体扣除",
+		"button.charge": "扣除"
 	},
 	"login": {
 		"text.welcome": "欢迎来到仙泽庄！",

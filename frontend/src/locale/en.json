@@ -6,7 +6,9 @@
 		"label.given": "{team} (given)",
 		"button.sendNotice": "Send",
 		"button.sendBanner": "Send",
-		"button.hideBanner": "Hide"
+		"button.hideBanner": "Hide",
+		"label.chargeAll": "Deduct All",
+		"button.charge": "Deduct"
 	},
 	"login": {
 		"text.welcome": "Welcome to AmVillage!",

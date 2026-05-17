@@ -130,13 +130,14 @@ func (g *GameState) ProcessCommand(c *Conn, args []string) {
 		}
 	}
 	switch args[0] {
-	case "notice", "popup":
+	case "notice", "popup", "charge_all":
 		if !g.config.Teams[c.team].IsAdmin {
 			go c.Write("error Cannot execute admin-only command")
+			return
 		}
 	}
 	switch args[0] {
-	case "login", "notice", "popup":
+	case "login", "notice", "popup", "charge_all":
 	default:
 		if g.game.Notice != "" {
 			go c.Write("error Notice in progress")
@@ -209,6 +210,18 @@ func (g *GameState) ProcessCommand(c *Conn, args []string) {
 	case "popup":
 		g.update = true
 		g.game.Popup = strings.Join(args[1:], " ")
+	case "charge_all":
+		if len(args) != 3 {
+			go c.Write("error Unexpected number of arguments")
+			return
+		}
+		resIdx, err1 := strconv.Atoi(args[1])
+		amount, err2 := strconv.Atoi(args[2])
+		if err1 != nil || err2 != nil {
+			go c.Write("error Expected numbers for resource and amount")
+			return
+		}
+		g.chargeAll(c, resIdx, amount)
 	default:
 		go c.Write("error Unknown command " + args[0])
 	}
@@ -244,6 +257,29 @@ func (g *GameState) releaseLock(c *Conn) bool {
 	}
 	g.game.Locks[c.team] = nil
 	return true
+}
+
+// chargeAll deducts the specified amount of a resource from all non-admin teams.
+func (g *GameState) chargeAll(c *Conn, resIdx int, amount int) {
+	if !g.game.Teams[c.team].IsAdmin {
+		go c.Write("error Cannot execute admin-only command")
+		return
+	}
+	g.update = true
+	if resIdx < 0 || resIdx >= len(g.game.Currencies)+len(g.game.Gems) {
+		go c.Write("error Invalid resource ID")
+		return
+	}
+	if amount < 0 {
+		go c.Write("error Cannot charge negative amount")
+		return
+	}
+
+	for i, team := range g.game.Teams {
+		if !team.IsAdmin {
+			g.game.Balances[i][resIdx] -= amount
+		}
+	}
 }
 
 // trade trades the resources described to the target team.
