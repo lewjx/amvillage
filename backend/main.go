@@ -25,6 +25,7 @@ const (
 var (
 	//go:embed build/*
 	frontend embed.FS
+
 	upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
