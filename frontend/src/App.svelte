@@ -46,7 +46,12 @@
 
 <svelte:window on:click={handleGlobalClick} on:touchstart={handleTouchStart} />
 
-<div class="popup" class:show={$state.popup && $state.notice === ""}><div>{$state.popup}</div></div>
+<div class="popup" class:show={$state.popup && $state.notice === ""}>
+	<div>
+		<div class="popup-title">📣 {$_("admin.label.notice").split(" ")[0]}</div>
+		<div class="popup-content">{@html $state.popup.replace(/\n/g, "<br>")}</div>
+	</div>
+</div>
 <div class="main-container">
 	{#if $state.notice === ""}
 		<svelte:component this={views[$status.status]} />
@@ -61,13 +66,22 @@
 
 <style lang="postcss">
 	.popup {
-		@apply w-full bg-red-300 max-h-0 overflow-hidden transition-all;
+		@apply fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300;
 	}
 	.popup.show {
-		@apply max-h-full;
+		@apply opacity-100 pointer-events-auto;
 	}
 	.popup > div {
-		@apply p-2;
+		@apply bg-white rounded-3xl shadow-2xl shadow-slate-900/20 p-8 w-full max-w-sm text-center transform scale-95 transition-transform duration-300 border border-slate-100;
+	}
+	.popup.show > div {
+		@apply scale-100;
+	}
+	.popup-title {
+		@apply text-2xl font-bold text-violet-700 mb-4;
+	}
+	.popup-content {
+		@apply text-lg text-slate-700 font-medium leading-relaxed;
 	}
 	.main-container {
 		@apply relative block flex-grow;
