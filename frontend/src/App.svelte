@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from "svelte"
-	import { addMessages, init as initI18n, locale } from "svelte-i18n"
+	import { _, addMessages, init as initI18n, locale } from "svelte-i18n"
 	import { connect, connected, state, type State } from "./lib/amvillage"
 	import { status } from "./lib/state"
 	import localeEn from "./locale/en.json"

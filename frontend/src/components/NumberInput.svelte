@@ -71,7 +71,7 @@
 		@apply flex;
 	}
 	button {
-		@apply inline-flex w-10 h-10 bg-slate-200 text-slate-700 items-center justify-center text-xl font-bold rounded-xl transition-all duration-200 shadow-sm;
+		@apply inline-flex w-8 h-8 bg-slate-200 text-slate-700 items-center justify-center text-lg font-bold rounded-lg transition-all duration-200 shadow-sm;
 	}
 	button:hover {
 		@apply bg-slate-300 scale-[1.05];
@@ -83,7 +83,7 @@
 		@apply bg-slate-100 text-slate-300 scale-100 cursor-not-allowed;
 	}
 	input {
-		@apply bg-white border border-slate-300 text-slate-900 mx-1 p-1 w-16 h-10 text-center text-xl font-semibold rounded-xl outline-none transition-all shadow-sm;
+		@apply bg-white border border-slate-300 text-slate-900 mx-1 p-1 w-14 h-8 text-center text-lg font-semibold rounded-lg outline-none transition-all shadow-sm;
 	}
 	input:focus {
 		@apply ring-2 ring-violet-500/20 border-violet-500;
