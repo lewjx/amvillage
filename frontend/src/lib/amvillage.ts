@@ -59,7 +59,7 @@ const tryLogin = () => {
 creds.subscribe(() => tryLogin())
 
 export const connect = () => {
-	const url = new URL(import.meta.env.VITE_BACKEND + "/ws", location.href)
+	const url = new URL((import.meta.env.VITE_BACKEND || "") + "/ws", location.href)
 	url.protocol = location.protocol === "https:" ? "wss:" : "ws:"
 	const websocket = new WebSocket(url)
 	websocket.onopen = () => {
