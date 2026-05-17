@@ -9,6 +9,7 @@
 
 	const value = Array($state.config.currencies.length).fill(0)
 	const gemValue = Array($state.config.gems.length).fill(0)
+	let activeTab: "currencies" | "materials" = "currencies"
 	$: currencyCount = $state.config.currencies.length
 	$: isAdmin = $state.config.teams[$state.team].is_admin
 	$: lock = $state.locks[$state.team]
@@ -53,32 +54,48 @@
 					{/if}
 					<hr />
 				</div>
-				<div class="resource-group">
-					<h3>{$_("trade.label.currencies")}</h3>
-					<div class="control">
-						{#each $state.config.currencies as currency, i}
-							<span>{currency}</span>
-							<NumberInput
-								min={isAdmin ? -$state.balances[target][i] : 0}
-								max={isAdmin ? undefined : $state.balances[$state.team][i]}
-								bind:value={value[i]}
-							/>
-						{/each}
-					</div>
+				<div class="tabs">
+					<button 
+						class="tab" 
+						class:active={activeTab === "currencies"} 
+						on:click={() => activeTab = "currencies"}>
+						{$_("trade.label.currencies")}
+					</button>
+					<button 
+						class="tab" 
+						class:active={activeTab === "materials"} 
+						on:click={() => activeTab = "materials"}>
+						{$_("trade.label.materials")}
+					</button>
 				</div>
-				<div class="resource-group">
-					<h3>{$_("trade.label.materials")}</h3>
-					<div class="control">
-						{#each $state.config.gems as gem, i}
-							<span>{gem}</span>
-							<NumberInput
-								min={isAdmin ? -$state.balances[$state.team][currencyCount + i] : 0}
-								max={isAdmin ? undefined : $state.balances[$state.team][currencyCount + i]}
-								bind:value={gemValue[i]}
-							/>
-						{/each}
+				{#if activeTab === "currencies"}
+					<div class="resource-group">
+						<div class="control">
+							{#each $state.config.currencies as currency, i}
+								<span>{currency}</span>
+								<NumberInput
+									min={isAdmin ? -$state.balances[target][i] : 0}
+									max={isAdmin ? undefined : $state.balances[$state.team][i]}
+									bind:value={value[i]}
+								/>
+							{/each}
+						</div>
 					</div>
-				</div>
+				{/if}
+				{#if activeTab === "materials"}
+					<div class="resource-group">
+						<div class="control">
+							{#each $state.config.gems as gem, i}
+								<span>{gem}</span>
+								<NumberInput
+									min={isAdmin ? -$state.balances[$state.team][currencyCount + i] : 0}
+									max={isAdmin ? undefined : $state.balances[$state.team][currencyCount + i]}
+									bind:value={gemValue[i]}
+								/>
+							{/each}
+						</div>
+					</div>
+				{/if}
 			</div>
 		{/if}
 	</div>
@@ -113,13 +130,19 @@
 		@apply text-violet-500 font-medium text-lg mt-2;
 	}
 	hr {
-		@apply w-full border-slate-200 my-4;
+		@apply w-full border-slate-200 my-2;
+	}
+	.tabs {
+		@apply flex w-full gap-2 bg-slate-100 p-1.5 rounded-2xl mb-2;
+	}
+	.tab {
+		@apply flex-1 py-3 text-lg font-bold text-slate-500 rounded-xl transition-all duration-300;
+	}
+	.tab.active {
+		@apply bg-white text-violet-700 shadow-md shadow-slate-200/50;
 	}
 	.resource-group {
 		@apply w-full bg-slate-50 border border-slate-200 rounded-2xl p-5 shadow-sm flex flex-col items-center;
-	}
-	.resource-group h3 {
-		@apply text-2xl font-bold text-center text-slate-700 mb-6 border-b-2 border-slate-200 w-full pb-2;
 	}
 	.trade .control {
 		@apply grid gap-x-6 gap-y-4 items-center justify-center w-full text-xl font-semibold;
