@@ -26,7 +26,25 @@
 	})
 
 	onMount(() => connect())
+
+	const handleTouchStart = (e: TouchEvent) => {
+		const target = e.target as HTMLElement
+		if (target.tagName !== "INPUT" && target.tagName !== "BUTTON") {
+			if (document.activeElement?.tagName === "INPUT") {
+				(document.activeElement as HTMLElement).blur()
+			}
+		}
+	}
+
+	const handleGlobalClick = () => {
+		// Only attempt auto-fullscreen on mobile devices
+		if (window.innerWidth <= 1024 && !document.fullscreenElement) {
+			document.documentElement.requestFullscreen().catch(() => {})
+		}
+	}
 </script>
+
+<svelte:window on:click={handleGlobalClick} on:touchstart={handleTouchStart} />
 
 <div class="popup" class:show={$state.popup && $state.notice === ""}><div>{$state.popup}</div></div>
 <div class="main-container">
