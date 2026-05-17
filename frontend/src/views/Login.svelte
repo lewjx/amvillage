@@ -22,7 +22,7 @@
 	}
 </script>
 
-<main transition:fly={{ y: 500 }}>
+<main in:fly={{ y: 50, duration: 300 }}>
 	<div class="glass-card">
 		<h1>{$_("login.text.welcome")}</h1>
 		<div class="input-group">

@@ -29,7 +29,7 @@
 	}
 </script>
 
-<main transition:fly={{ y: 500 }}>
+<main in:fly={{ y: 50, duration: 300 }}>
 	<div class="welcome">
 		<I18n id="mainmenu.text.welcome" values={{ username: $state.username }} />
 	</div>

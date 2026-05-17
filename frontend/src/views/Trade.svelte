@@ -33,7 +33,7 @@
 	}
 </script>
 
-<main transition:fly={{ y: 500 }}>
+<main in:fly={{ y: 50, duration: 300 }}>
 	<div class="content">
 		{#if $state.locks[$state.team] === null && !isAdmin}
 			<div class="error">{$_("trade.error.timeout")}</div>
