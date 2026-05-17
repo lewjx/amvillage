@@ -12,6 +12,8 @@
 		"text.welcome": "欢迎来到仙泽庄！",
 		"label.username": "显示名：",
 		"placeholder.username": "你OG会看到的名字",
+		"label.password": "密码：",
+		"placeholder.password": "组别密码",
 		"button.start": "开始"
 	},
 	"mainmenu": {

@@ -8,7 +8,14 @@
 <style lang="postcss">
 	button {
 		@apply border border-black px-6 py-3 rounded-xl cursor-pointer transition-all text-lg font-medium shadow-sm;
-		@apply hover:bg-black hover:text-white active:bg-gray-800;
-		@apply disabled:bg-gray-300 disabled:text-gray-700 disabled:shadow-none;
+	}
+	button:hover {
+		@apply bg-black text-white;
+	}
+	button:active {
+		@apply bg-gray-800;
+	}
+	button:disabled {
+		@apply bg-gray-300 text-gray-700 shadow-none;
 	}
 </style>

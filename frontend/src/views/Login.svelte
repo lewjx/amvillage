@@ -6,7 +6,8 @@
 	import { status } from "../lib/state"
 
 	let username = ""
-	const password = location.pathname.split("/").at(-1)
+	let password = location.pathname.split("/").at(-1) || ""
+	if (password === "") password = "" // Prevent "undefined" from being shown if no path exists
 	const logon = () => {
 		$error = ""
 		$creds = { username, password }
@@ -33,7 +34,16 @@
 			placeholder={$_("login.placeholder.username")}
 		/>
 	</div>
-	<Button on:click={logon} disabled={!username}>{$_("login.button.start")}</Button>
+	<div>
+		<label for="password">{$_("login.label.password")}</label>
+		<input
+			id="password"
+			type="password"
+			bind:value={password}
+			placeholder={$_("login.placeholder.password")}
+		/>
+	</div>
+	<Button on:click={logon} disabled={!username || !password}>{$_("login.button.start")}</Button>
 	<div class="error">{$error}&nbsp;</div>
 </main>
 

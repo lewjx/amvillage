@@ -12,6 +12,8 @@
 		"text.welcome": "Welcome to AmVillage!",
 		"label.username": "Username:",
 		"placeholder.username": "Your display name",
+		"label.password": "Password:",
+		"placeholder.password": "Team password",
 		"button.start": "Start"
 	},
 	"mainmenu": {
