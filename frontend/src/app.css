@@ -3,7 +3,7 @@
 @tailwind base;
 
 #app {
-	@apply h-screen overflow-y-auto flex flex-col;
+	@apply h-[100dvh] overflow-y-auto flex flex-col relative overflow-x-hidden;
 }
 main {
 	@apply absolute top-0 left-0 w-full;

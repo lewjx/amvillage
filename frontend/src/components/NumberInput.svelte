@@ -12,13 +12,13 @@
 	const hold = (num: number) => () => {
 		release()
 		let speed = 0.1
-		let internalValue = value - 0
+		let internalValue = (value ?? 0) - 0
 		const update = () => {
 			const prev = internalValue
 			internalValue += speed * num
 			internalValue = cap(internalValue)
 			if (internalValue === prev) {
-				clearInterval(timeout)
+				if (timeout !== null) clearInterval(timeout)
 				return
 			}
 			if (num > 0) {
@@ -38,7 +38,7 @@
 	}
 
 	const update = () => {
-		value = cap(value)
+		value = cap(value ?? 0)
 	}
 </script>
 
@@ -48,7 +48,7 @@
 		on:mouseup={release}
 		on:touchstart|preventDefault={hold(-1)}
 		on:touchend|preventDefault={release}
-		disabled={value <= min}>−</button
+		disabled={typeof min === "number" && (value ?? 0) <= min}>−</button
 	>
 	<input type="number" inputmode="numeric" {min} {max} bind:value on:change={update} />
 	<button
@@ -56,7 +56,7 @@
 		on:mouseup={release}
 		on:touchstart|preventDefault={hold(1)}
 		on:touchend|preventDefault={release}
-		disabled={value >= max}>+</button
+		disabled={typeof max === "number" && (value ?? 0) >= max}>+</button
 	>
 </div>
 
