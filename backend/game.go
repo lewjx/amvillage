@@ -225,6 +225,12 @@ func (g *GameState) ProcessCommand(c *Conn, args []string) {
 	default:
 		go c.Write("error Unknown command " + args[0])
 	}
+	if g.update {
+		g.update = false
+		for conn := range g.conn {
+			g.pushState(conn)
+		}
+	}
 }
 
 // login attempts to log the player into a team.
