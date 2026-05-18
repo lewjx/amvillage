@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind base;
 
+html {
+	font-size: 16px;
+}
+
+/* Scale down UI on phones to prevent scrolling */
+@media (max-width: 768px) {
+	html {
+		font-size: 14px;
+	}
+}
+@media (max-width: 400px), (max-height: 750px) {
+	html {
+		font-size: 13px;
+	}
+}
+@media (max-height: 650px) {
+	html {
+		font-size: 12px;
+	}
+}
+
 #app {
 	@apply h-[100dvh] overflow-y-auto flex flex-col;
 	@apply bg-slate-50 text-slate-900;
