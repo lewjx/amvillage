@@ -73,7 +73,7 @@
 						{#each $state.config.currencies as currency, i}
 							<span>{currency}</span>
 							<NumberInput
-								min={isAdmin ? -$state.balances[target][i] : 0}
+								min={isAdmin ? Math.min(0, -$state.balances[target][i]) : 0}
 								max={isAdmin ? undefined : $state.balances[$state.team][i]}
 								bind:value={value[i]}
 							/>
@@ -85,7 +85,7 @@
 						{#each $state.config.gems as gem, i}
 							<span>{gem}</span>
 							<NumberInput
-								min={isAdmin ? -$state.balances[$state.team][currencyCount + i] : 0}
+								min={isAdmin ? Math.min(0, -$state.balances[target][currencyCount + i]) : 0}
 								max={isAdmin ? undefined : $state.balances[$state.team][currencyCount + i]}
 								bind:value={gemValue[i]}
 							/>

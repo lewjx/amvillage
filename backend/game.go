@@ -316,8 +316,12 @@ func (g *GameState) trade(c *Conn, to int, amount []int) {
 	} else if !g.game.Teams[to].IsAdmin {
 		// Normalize amounts such that the non-admin team will not go negative.
 		for i, v := range amount {
-			if v+g.game.Balances[to][i] < 0 {
-				amount[i] = -g.game.Balances[to][i]
+			if v < 0 && v+g.game.Balances[to][i] < 0 {
+				if g.game.Balances[to][i] > 0 {
+					amount[i] = -g.game.Balances[to][i]
+				} else {
+					amount[i] = 0 // Target is already zero or negative, cannot take more
+				}
 			}
 		}
 	}
