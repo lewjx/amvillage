@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte"
 	import { _, addMessages, init as initI18n, locale } from "svelte-i18n"
-	import { connect, connected, state, type State } from "./lib/amvillage"
+	import { connect, connected, state, ws, type State } from "./lib/amvillage"
 	import { status } from "./lib/state"
 	import localeEn from "./locale/en.json"
 	import localeZh from "./locale/zh.json"
@@ -124,7 +124,10 @@
 		@apply text-lg text-slate-700 font-medium leading-relaxed;
 	}
 	.close-btn {
-		@apply absolute top-3 right-3 text-slate-400 hover:text-slate-700 transition-colors duration-200 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100;
+		@apply absolute top-3 right-3 text-slate-400 transition-colors duration-200 text-xl w-8 h-8 flex items-center justify-center rounded-full;
+	}
+	.close-btn:hover {
+		@apply text-slate-700 bg-slate-100;
 	}
 	.main-container {
 		@apply relative block flex-grow;
@@ -133,7 +136,10 @@
 		@apply bg-rose-600 text-white flex items-center justify-between px-4 py-3 shadow-md flex-shrink-0 w-full z-10;
 	}
 	.stop-btn {
-		@apply bg-white/20 hover:bg-white/30 text-white px-3 py-1 ml-4 rounded-full text-sm font-bold transition-colors whitespace-nowrap;
+		@apply bg-white/20 text-white px-3 py-1 ml-4 rounded-full text-sm font-bold transition-colors whitespace-nowrap;
+	}
+	.stop-btn:hover {
+		@apply bg-white/30;
 	}
 	.warning {
 		@apply absolute bottom-2 right-2 text-5xl animate-bounce;
