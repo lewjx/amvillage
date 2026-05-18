@@ -18,6 +18,14 @@
 	}
 	const chargeAll = () => {
 		$ws.send(`charge_all ${chargeResource} ${chargeAmount}`)
+		
+		let resName = chargeResource < $state.config.currencies.length 
+			? $state.config.currencies[chargeResource] 
+			: $state.config.gems[chargeResource - $state.config.currencies.length]
+		
+		let autoNotice = $_("admin.text.chargePopup", { values: { amount: chargeAmount, resource: resName } })
+		$ws.send("popup " + autoNotice)
+		
 		alert($_("admin.text.chargeSuccess"))
 		chargeAmount = 0
 	}

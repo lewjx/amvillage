@@ -9,7 +9,8 @@
 		"button.hideBanner": "Hide",
 		"label.chargeAll": "Deduct All",
 		"button.charge": "Deduct",
-		"text.chargeSuccess": "Successfully deducted!"
+		"text.chargeSuccess": "Successfully deducted!",
+		"text.chargePopup": "Admin deducted {amount} {resource} from all teams."
 	},
 	"login": {
 		"text.welcome": "Welcome to AmVillage!",

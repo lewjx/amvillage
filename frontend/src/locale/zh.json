@@ -9,7 +9,8 @@
 		"button.hideBanner": "隐藏",
 		"label.chargeAll": "全体扣除",
 		"button.charge": "扣除",
-		"text.chargeSuccess": "扣除成功！"
+		"text.chargeSuccess": "扣除成功！",
+		"text.chargePopup": "管理员已从所有队伍扣除 {amount} {resource}。"
 	},
 	"login": {
 		"text.welcome": "欢迎来到仙泽庄！",
