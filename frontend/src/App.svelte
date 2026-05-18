@@ -47,11 +47,13 @@
 	$: if ($state.popup !== localPopupHiddenFor) {
 		localPopupHiddenFor = ""
 	}
+	
+	$: isAdmin = $state?.team >= 0 && $state.config?.teams?.[$state.team]?.is_admin
 </script>
 
 <svelte:window on:click={handleGlobalClick} on:touchstart={handleTouchStart} />
 
-<div class="popup" class:show={$state.popup && $state.notice === "" && localPopupHiddenFor !== $state.popup}>
+<div class="popup" class:show={$state.popup && $state.notice === "" && localPopupHiddenFor !== $state.popup && !isAdmin}>
 	<div>
 		<div class="popup-title">📣 {$_("admin.label.notice").split(" ")[0]}</div>
 		<div class="popup-content">{@html $state.popup.replace(/\n/g, "<br>")}</div>
