@@ -5,24 +5,30 @@
 	import PlayerBalance from "../components/PlayerBalance.svelte"
 	import Button from "../components/Button.svelte"
 	import I18n from "../components/I18n.svelte"
-	import { state, ws } from "../lib/amvillage"
+	import { error, state, ws } from "../lib/amvillage"
 	import { status } from "../lib/state"
 
 	$: isAdmin = $state.config.teams[$state.team].is_admin
 	$: lock = $state.locks[$state.team]
 
 	let loading = false
+	let tradeInterval: number
+	$: if ($error) {
+		loading = false
+		clearInterval(tradeInterval)
+	}
+	
 	const trade = (i: number) => () => {
+		$error = ""
 		if (!isAdmin) $ws.send("lock")
 		loading = true
-		let interval: number
-		interval = setInterval(() => {
+		tradeInterval = setInterval(() => {
 			if ($state.locks[$state.team] !== null || isAdmin) {
 				$status = {
 					status: "trade",
 					target: i,
 				}
-				clearInterval(interval)
+				clearInterval(tradeInterval)
 				loading = false
 			}
 		}, 100)
@@ -44,7 +50,7 @@
 		{#if $state.config.teams[$state.team].is_admin || lock === null}
 			{#each $state.config.teams as team, i}
 				{#if i !== $state.team}
-					<Button on:click={trade(i)} disabled={loading}>{team.name}</Button>
+					<Button on:click={trade(i)} disabled={loading || $state.notice !== ""}>{team.name}</Button>
 				{/if}
 			{/each}
 		{:else}

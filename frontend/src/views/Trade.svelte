@@ -97,7 +97,7 @@
 	</div>
 	<div class="buttons">
 		{#if lock?.member === $state.username || isAdmin}
-			<button class="confirm" on:click={trade} disabled={!tradeOK}>{$_("trade.button.confirm")}</button>
+			<button class="confirm" on:click={trade} disabled={!tradeOK || $state.notice !== ""}>{$_("trade.button.confirm")}</button>
 		{/if}
 		<Button on:click={cancel} classes="w-full rounded-full">{$_("trade.button.cancel")}</Button>
 	</div>
