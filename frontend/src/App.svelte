@@ -42,14 +42,20 @@
 			document.documentElement.requestFullscreen().catch(() => {})
 		}
 	}
+
+	let localPopupHiddenFor = ""
+	$: if ($state.popup !== localPopupHiddenFor) {
+		localPopupHiddenFor = ""
+	}
 </script>
 
 <svelte:window on:click={handleGlobalClick} on:touchstart={handleTouchStart} />
 
-<div class="popup" class:show={$state.popup && $state.notice === ""}>
+<div class="popup" class:show={$state.popup && $state.notice === "" && localPopupHiddenFor !== $state.popup}>
 	<div>
 		<div class="popup-title">📣 {$_("admin.label.notice").split(" ")[0]}</div>
 		<div class="popup-content">{@html $state.popup.replace(/\n/g, "<br>")}</div>
+		<button class="close-btn" on:click={() => localPopupHiddenFor = $state.popup}>✕</button>
 	</div>
 </div>
 <div class="main-container">
@@ -72,7 +78,7 @@
 		@apply opacity-100 pointer-events-auto;
 	}
 	.popup > div {
-		@apply bg-white rounded-3xl shadow-2xl shadow-slate-900/20 p-8 w-full max-w-sm text-center transform scale-95 transition-transform duration-300 border border-slate-100;
+		@apply relative bg-white rounded-3xl shadow-2xl shadow-slate-900/20 p-8 w-full max-w-sm text-center transform scale-95 transition-transform duration-300 border border-slate-100;
 	}
 	.popup.show > div {
 		@apply scale-100;
@@ -82,6 +88,9 @@
 	}
 	.popup-content {
 		@apply text-lg text-slate-700 font-medium leading-relaxed;
+	}
+	.close-btn {
+		@apply absolute top-3 right-3 text-slate-400 hover:text-slate-700 transition-colors duration-200 text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-slate-100;
 	}
 	.main-container {
 		@apply relative block flex-grow;

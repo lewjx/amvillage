@@ -7,6 +7,7 @@
 	let popup = ""
 	let chargeAmount = 0
 	let chargeResource = 0
+	let customChargeNotice = ""
 	const sendNotice = () => {
 		$ws.send("notice " + notice)
 	}
@@ -23,11 +24,12 @@
 			? $state.config.currencies[chargeResource] 
 			: $state.config.gems[chargeResource - $state.config.currencies.length]
 		
-		let autoNotice = $_("admin.text.chargePopup", { values: { amount: chargeAmount, resource: resName } })
+		let autoNotice = customChargeNotice || $_("admin.text.chargePopup", { values: { amount: chargeAmount, resource: resName } })
 		$ws.send("popup " + autoNotice)
 		
 		alert($_("admin.text.chargeSuccess"))
 		chargeAmount = 0
+		customChargeNotice = ""
 	}
 </script>
 
@@ -42,16 +44,19 @@
 		<Button on:click={hidePopup}>{$_("admin.button.hideBanner")}</Button>
 	</div>
 	<span>{$_("admin.label.chargeAll")}</span>
-	<div class="flex flex-wrap items-center gap-2">
-		<input type="number" bind:value={chargeAmount} class="w-16" min="0" />
-		<select bind:value={chargeResource} class="border border-black p-1">
-			{#each $state.config.currencies as cur, i}
-				<option value={i}>{cur}</option>
-			{/each}
-			{#each $state.config.gems as gem, i}
-				<option value={$state.config.currencies.length + i}>{gem}</option>
-			{/each}
-		</select>
+	<div class="flex flex-col gap-1">
+		<div class="flex flex-wrap items-center gap-2">
+			<input type="number" bind:value={chargeAmount} class="w-16" min="0" />
+			<select bind:value={chargeResource} class="border border-black p-1">
+				{#each $state.config.currencies as cur, i}
+					<option value={i}>{cur}</option>
+				{/each}
+				{#each $state.config.gems as gem, i}
+					<option value={$state.config.currencies.length + i}>{gem}</option>
+				{/each}
+			</select>
+		</div>
+		<input type="text" bind:value={customChargeNotice} placeholder="Custom notice (optional)" class="text-sm p-1" />
 	</div>
 	<Button on:click={chargeAll} disabled={chargeAmount < 0}>{$_("admin.button.charge")}</Button>
 </div>
