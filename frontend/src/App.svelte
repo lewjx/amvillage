@@ -49,23 +49,55 @@
 	}
 	
 	$: isAdmin = $state?.team >= 0 && $state.config?.teams?.[$state.team]?.is_admin
+	
+	let showNoticePopout = false
+	let lastNotice = ""
+	let noticeTimeout: any
+	
+	$: if ($state.notice !== "" && $state.notice !== lastNotice) {
+		lastNotice = $state.notice
+		if (!isAdmin) {
+			showNoticePopout = true
+			clearTimeout(noticeTimeout)
+			noticeTimeout = setTimeout(() => {
+				showNoticePopout = false
+			}, 6000)
+		}
+	} else if ($state.notice === "") {
+		lastNotice = ""
+		showNoticePopout = false
+	}
 </script>
 
 <svelte:window on:click={handleGlobalClick} on:touchstart={handleTouchStart} />
 
-<div class="popup" class:show={$state.popup && $state.notice === "" && localPopupHiddenFor !== $state.popup && !isAdmin}>
+{#if $state.notice !== ""}
+	<div class="notice-banner">
+		<span class="flex-grow font-bold text-center">{$state.notice}</span>
+		{#if isAdmin}
+			<button class="stop-btn" on:click={() => $ws.send("notice ")}>{$_("notice.button.stop")}</button>
+		{/if}
+	</div>
+{/if}
+
+<div class="popup" class:show={$state.popup && localPopupHiddenFor !== $state.popup && !isAdmin}>
 	<div>
-		<div class="popup-title">📣 {$_("admin.label.notice").split(" ")[0]}</div>
+		<div class="popup-title">📣 {$_("admin.label.banner").split(" ")[0]}</div>
 		<div class="popup-content">{@html $state.popup.replace(/\n/g, "<br>")}</div>
 		<button class="close-btn" on:click={() => localPopupHiddenFor = $state.popup}>✕</button>
 	</div>
 </div>
+
+<div class="popup" class:show={showNoticePopout}>
+	<div>
+		<div class="popup-title">📣 {$_("admin.label.notice").split(" ")[0]}</div>
+		<div class="popup-content">{@html $state.notice.replace(/\n/g, "<br>")}</div>
+		<button class="close-btn" on:click={() => showNoticePopout = false}>✕</button>
+	</div>
+</div>
+
 <div class="main-container">
-	{#if $state.notice === ""}
-		<svelte:component this={views[$status.status]} />
-	{:else}
-		<Notice />
-	{/if}
+	<svelte:component this={views[$status.status]} />
 </div>
 
 {#if !$connected && $status.status !== "login"}
@@ -96,6 +128,12 @@
 	}
 	.main-container {
 		@apply relative block flex-grow;
+	}
+	.notice-banner {
+		@apply bg-rose-600 text-white flex items-center justify-between px-4 py-3 shadow-md flex-shrink-0 w-full z-10;
+	}
+	.stop-btn {
+		@apply bg-white/20 hover:bg-white/30 text-white px-3 py-1 ml-4 rounded-full text-sm font-bold transition-colors whitespace-nowrap;
 	}
 	.warning {
 		@apply absolute bottom-2 right-2 text-5xl animate-bounce;
